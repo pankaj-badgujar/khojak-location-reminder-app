@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">Khojak</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_location">Map</string>
+    <string name="close">Close</string>
+    <string name="enter_details">Enter Reminder Title</string>
+    <string name="reminder">Add title</string>
+    <string name="button_clear">Clear</string>
+    <string name="add_submit">Add</string>
+    <string name="exit">Exit</string>
 </resources>
