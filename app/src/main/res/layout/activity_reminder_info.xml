@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    android:layout_marginBottom="0dp"
+    android:background="@color/colorPrimary"
+    android:gravity="center"
+    android:theme="@style/AppTheme.ReminderInfo"
+    tools:context=".TODOList.TODOListPersonal">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:contentDescription="@string/close"
+        android:contextClickable="true"
+        android:elevation="5dp"
+        android:onClick="closeActivity"
+        android:src="@drawable/ic_close_black_24dp" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        app:cardBackgroundColor="@color/popUpColor"
+        app:cardCornerRadius="10dp">
+
+        <ScrollView
+            android:id="@+id/scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:ems="10"
+                    android:text="@string/reminder_prompt_title"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/reminderTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="5dp">
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="left|center_vertical"
+                        android:backgroundTint="@color/colorPrimary"
+                        android:onClick="onSetLocationPressed"
+                        android:text="@string/set_location_txt"
+                        android:drawableLeft="@drawable/ic_add_black_24dp"
+                        android:drawablePadding="20dp"
+                        android:textColor="@color/white" />
+
+                    <EditText
+                        android:id="@+id/urlName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="0dp"
+                        android:ems="10"
+                        android:hint="@string/reminder"
+                        android:inputType="text" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.coordinatorlayout.widget.CoordinatorLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:weightSum="3">
+
+                        <Button
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center|center"
+                            android:layout_weight="1"
+                            android:backgroundTint="@color/colorPrimary"
+                            android:onClick="clearText"
+                            android:text="@string/button_clear"
+                            android:textColor="@color/white"/>
+
+                        <Button
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center|center"
+                            android:layout_weight="1"
+                            android:backgroundTint="@color/colorPrimary"
+                            android:onClick="createReminder"
+                            android:text="@string/add_submit"
+                            android:textColor="@color/white"/>
+
+                        <Button
+                            android:id="@+id/closeSetReminderPromptBtn"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center|center"
+                            android:layout_weight="1"
+                            android:backgroundTint="@color/exit"
+                            android:text="@string/exit"
+                            android:onClick="exit"
+                            android:textColor="@color/white"/>
+                    </LinearLayout>
+                </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+            </LinearLayout>
+        </ScrollView>
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>
