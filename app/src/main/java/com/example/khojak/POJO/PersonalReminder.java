@@ -4,31 +4,65 @@ import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "ReminderData")
 public class PersonalReminder implements Parcelable {
+
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+    @ColumnInfo
     private String title;
-    private Location location;
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    @ColumnInfo
+    private double latitude;
+    @ColumnInfo
+    private double longitude;
 
     public PersonalReminder(Parcel in) {
         this.title = in.readString();
-        this.location = in.readParcelable(Location.class.getClassLoader());
+        this.latitude = in.readDouble();
+        this.longitude = in.readDouble();
     }
 
     public PersonalReminder() {
         this.title = "";
-        this.location = null;
     }
 
     public PersonalReminder(String reminder, Location location) {
         this.title = reminder;
-        this.location = location;
+        this.latitude = location.getLatitude();
+        this.longitude = location.getLongitude();
     }
 
     public Location getLocation() {
+        Location location = new Location("");
+        location.setLongitude(longitude);
+        location.setLatitude(latitude);
         return location;
     }
 
     public void setLocation(Location location) {
-        this.location = location;
+        this.longitude = location.getLongitude();
+        this.latitude = location.getLongitude();
     }
 
     public String getTitle() {
@@ -59,6 +93,15 @@ public class PersonalReminder implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(title);
-        parcel.writeParcelable(location, i);
+        parcel.writeDouble(latitude);
+        parcel.writeDouble(longitude);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

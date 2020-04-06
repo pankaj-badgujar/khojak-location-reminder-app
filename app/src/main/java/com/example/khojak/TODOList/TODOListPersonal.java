@@ -1,54 +1,57 @@
 package com.example.khojak.TODOList;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+
 import com.example.khojak.Adapters.TODOAdapter;
 import com.example.khojak.POJO.PersonalReminder;
 import com.example.khojak.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 public class TODOListPersonal extends AppCompatActivity {
 
-    private TODOAdapter adapter;
+    private static TODOAdapter adapter;
     private ListView listView;
+    private final static int REQUEST_CODE_1 = 1;
     private final Context context = this;
     private AlertDialog inputDialog;
     private EditText reminderTitle;
+    private Location location;
     private final static String emptyText = "";
+    private final static String errorText = "This field cannot be empty.";
 
+    public static void addToList(List<PersonalReminder> data) {
+        adapter.addAll(data);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        Intent intent = new Intent(this, NotificationService.class);
+        startService(intent);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo_personal);
-        Location targetLocation = new Location("");//provider name is unnecessary
-        targetLocation.setLatitude(0.0d);//your coords of course
-        targetLocation.setLongitude(0.0d);
-        PersonalReminder personalReminder = new PersonalReminder("Hey", targetLocation);
 
+        //Consumer to call addToList Function for the data fetched.
+        Consumer<List<PersonalReminder>> function = TODOListPersonal::addToList;
+        (new FetchTask(this, function)).execute();
         adapter = new TODOAdapter(this);
         listView = findViewById(R.id.personal_todo_list);
         listView.setAdapter(adapter);
-
-        adapter.add(personalReminder);
-
-
 
         FloatingActionButton fab = findViewById(R.id.new_todo);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -81,18 +84,48 @@ public class TODOListPersonal extends AppCompatActivity {
     }
 
 
-    public void onSetLocationPressed(View view){
-        Toast.makeText(this,"starting map activity",Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(this, LocationActivity.class));
+    public void onSetLocationPressed(View view) {
+        Toast.makeText(this, "starting map activity", Toast.LENGTH_SHORT).show();
+        startActivityForResult(new Intent(this, LocationActivity.class), REQUEST_CODE_1);
     }
 
     public void exit(View view) {
         inputDialog.dismiss();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_1:
+                if(data != null) {
+                    this.location = data.getParcelableExtra("location");
+                    Toast.makeText(this, location != null ? location.toString() : "",
+                            Toast.LENGTH_LONG).show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     public void closeActivity(View view) {
         inputDialog.dismiss();
     }
 
-
+    public void createReminder(View view) {
+        String reminder = reminderTitle.getText().toString();
+        if (reminder.isEmpty()) {
+            reminderTitle.setError(errorText);
+        } else if (location == null) {
+            Toast.makeText(this, " Location cannot be empty.",
+                    Toast.LENGTH_LONG).show();
+        } else {
+            PersonalReminder personalReminder = new PersonalReminder(reminder, location);
+            adapter.add(personalReminder);
+            (new InsertTask(this,personalReminder)).execute();
+            this.location = null;
+            inputDialog.dismiss();
+        }
+    }
 }
