@@ -71,7 +71,7 @@
                         android:backgroundTint="@color/colorPrimary"
                         android:onClick="onSetLocationPressed"
                         android:text="@string/set_location_txt"
-                        android:drawableLeft="@drawable/ic_add_black_24dp"
+                        android:drawableLeft="@drawable/ic_add_location_black_24dp"
                         android:drawablePadding="20dp"
                         android:textColor="@color/white" />
 
