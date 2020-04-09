@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_todo_personal"
-    tools:context=".TODOList.TODOListPersonal">
+    tools:context=".LocationReminder.TODOList.TODOListPersonal">
 
     <ListView
         android:id="@+id/personal_todo_list"

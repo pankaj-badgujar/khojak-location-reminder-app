@@ -1,4 +1,4 @@
-package com.example.khojak.DAO;
+package com.example.khojak.LocationReminder.DAO;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -6,7 +6,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.example.khojak.POJO.PersonalReminder;
+import com.example.khojak.LocationReminder.POJO.PersonalReminder;
 
 import java.util.List;
 

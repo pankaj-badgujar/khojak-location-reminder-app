@@ -1,4 +1,4 @@
-package com.example.khojak.TODOList;
+package com.example.khojak.LocationReminder.TODOList;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,8 +15,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 
-import com.example.khojak.Adapters.TODOAdapter;
-import com.example.khojak.POJO.PersonalReminder;
+import com.example.khojak.LocationReminder.Adapters.TODOAdapter;
+import com.example.khojak.LocationReminder.POJO.PersonalReminder;
 import com.example.khojak.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 

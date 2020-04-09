@@ -1,4 +1,4 @@
-package com.example.khojak.TODOList;
+package com.example.khojak.LocationReminder.TODOList;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,9 +8,8 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.example.khojak.POJO.PersonalReminder;
+import com.example.khojak.LocationReminder.POJO.PersonalReminder;
 import com.example.khojak.R;
 
 public class ReminderInfo extends AppCompatActivity {

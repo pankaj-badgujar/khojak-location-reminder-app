@@ -1,21 +1,21 @@
-package com.example.khojak.TODOList;
+package com.example.khojak.LocationReminder.TODOList;
 
 import android.os.AsyncTask;
 
-import com.example.khojak.Database.ReminderDatabase;
-import com.example.khojak.POJO.PersonalReminder;
+import com.example.khojak.LocationReminder.Database.ReminderDatabase;
+import com.example.khojak.LocationReminder.POJO.PersonalReminder;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class FetchTask extends AsyncTask<Void, Void, List<PersonalReminder>> {
+public class FetchTaskForService extends AsyncTask<Void, Void, List<PersonalReminder>> {
 
-    private WeakReference<TODOListPersonal> context;
+    private WeakReference<NotificationService> context;
     private ReminderDatabase database;
     private Consumer<List<PersonalReminder>> function;
 
-    public FetchTask(TODOListPersonal activity, Consumer<List<PersonalReminder>> function) {
+    public FetchTaskForService(NotificationService activity, Consumer<List<PersonalReminder>> function) {
         context = new WeakReference<>(activity);
         this.function = function;
     }
@@ -28,8 +28,8 @@ public class FetchTask extends AsyncTask<Void, Void, List<PersonalReminder>> {
 
     @Override
     protected void onPostExecute(List<PersonalReminder> data) {
-       if(function != null ) {
-           this.function.accept(data);
-       }
+        if (function != null) {
+            this.function.accept(data);
+        }
     }
 }
