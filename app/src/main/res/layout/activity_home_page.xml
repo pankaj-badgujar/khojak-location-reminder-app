@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ced6e0"
     android:orientation="vertical"
     tools:context=".HomePage">
 
@@ -23,18 +24,73 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/locationReminderCard"
+        android:layout_width="350dp"
+        android:layout_height="275dp"
         android:layout_gravity="center"
         android:layout_marginTop="40dp"
-        android:layout_width="300dp"
-        android:layout_height="275dp"
-        android:onClick="openLocationReminderActivity"/>
+        android:onClick="openLocationReminderActivity"
+        app:cardCornerRadius="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/locRem_Img"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:alpha="0.7"
+                android:contentDescription="@string/location_reminder"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/location_reminder" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/reminderCardTextBg"
+                android:gravity="center"
+                android:text="@string/location_reminder"
+                android:textColor="#FFFFFF"
+                android:textSize="30sp" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/locationTrackerCard"
-        android:layout_gravity="center"
-        android:layout_width="300dp"
+        android:layout_width="350dp"
         android:layout_height="275dp"
+        android:layout_gravity="center"
         android:layout_marginTop="40dp"
-        android:onClick="openLocationTrackerActivity"/>
+        android:onClick="openLocationTrackerActivity"
+        app:cardCornerRadius="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:contentDescription="@string/location_tracker"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/location_tracker" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/trackerCardTextBg"
+                android:gravity="center"
+                android:text="@string/location_tracker"
+                android:textColor="#FFFFFF"
+                android:textSize="30sp" />
+
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 
 </LinearLayout>

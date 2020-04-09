@@ -23,7 +23,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".LocationTracker.LocationTracker"
-            android:label="@string/title_activity_location_tracker"
+            android:label="@string/location_tracker"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".HomePage"
@@ -53,6 +53,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".LocationReminder.TODOList.TODOListPersonal"
+            android:label="@string/location_reminder"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data
