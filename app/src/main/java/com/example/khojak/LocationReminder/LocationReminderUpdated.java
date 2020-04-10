@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -154,4 +157,24 @@ public class LocationReminderUpdated extends AppCompatActivity {
         }
     }
 
+    public void openRadiusDialog(){
+        Toast.makeText(this,"setting radius",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.location_reminder_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.locationReminderMenu:
+                openRadiusDialog();
+                return true;
+            default:return super.onOptionsItemSelected(item);
+        }
+    }
 }
