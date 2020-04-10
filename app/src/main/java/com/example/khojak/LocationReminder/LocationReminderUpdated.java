@@ -10,6 +10,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,6 +41,9 @@ public class LocationReminderUpdated extends AppCompatActivity {
     private Location location;
     private final static String emptyText = "";
     private final static String errorText = "This field cannot be empty.";
+    private TextView radiusText;
+    private SeekBar radiusSeekBar;
+    private static int reminderRadius;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +93,6 @@ public class LocationReminderUpdated extends AppCompatActivity {
             public void onClick(View view) {
                 // get activity_reminder_info.xml as prompt
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
-                final View parentView = view;
                 final View promptView = layoutInflater.inflate(R.layout.activity_reminder_info, null);
                 reminderTitle = promptView.findViewById(R.id.urlName);
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -133,10 +137,10 @@ public class LocationReminderUpdated extends AppCompatActivity {
             Toast.makeText(this, " Location cannot be empty.",
                     Toast.LENGTH_LONG).show();
         } else {
-        PersonalReminder personalReminder = new PersonalReminder(reminder, location);
-        reminderViewModel.addReminder(personalReminder);
-        this.location = null;
-        inputDialog.dismiss();
+            PersonalReminder personalReminder = new PersonalReminder(reminder, location);
+            reminderViewModel.addReminder(personalReminder);
+            this.location = null;
+            inputDialog.dismiss();
         }
     }
 
@@ -157,8 +161,54 @@ public class LocationReminderUpdated extends AppCompatActivity {
         }
     }
 
+    public void updateRadiusText(int newRadius){
+        radiusText.setText("Radius (in miles) : " + newRadius);
+    }
+
+    SeekBar.OnSeekBarChangeListener radiusSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            updateRadiusText(progress);
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };
+
     public void openRadiusDialog(){
-        Toast.makeText(this,"setting radius",Toast.LENGTH_SHORT).show();
+
+        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        final View promptView = layoutInflater.inflate(R.layout.radius_slider,null);
+
+        AlertDialog.Builder radiusAlertDialogBuilder = new AlertDialog.Builder(context);
+
+        // set activity_reminder_info.xml to be the layout file of the inputDialog builder
+        radiusAlertDialogBuilder.setView(promptView);
+
+        radiusSeekBar = promptView.findViewById(R.id.radiusSeekBar);
+        radiusSeekBar.setOnSeekBarChangeListener(radiusSeekBarChangeListener);
+        radiusText = promptView.findViewById(R.id.radiusText);
+        updateRadiusText(radiusSeekBar.getProgress());
+
+        // setup a dialog window
+        radiusAlertDialogBuilder
+                .setCancelable(true)
+                .setPositiveButton("Apply", ((dialog, id) ->{
+                    reminderRadius = radiusSeekBar.getProgress();
+                    Toast.makeText(this,"Radius set to "+reminderRadius,Toast.LENGTH_SHORT).show();
+                }
+                ))
+                .setNegativeButton("Cancel", ((dialog, id) -> dialog.cancel() ));
+
+        // create an alert dialog
+        radiusAlertDialogBuilder.create().show();
     }
 
     @Override
