@@ -1,4 +1,4 @@
-package com.example.khojak.Database;
+package com.example.khojak.LocationReminder.Database;
 
 import android.content.Context;
 
@@ -6,8 +6,8 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import com.example.khojak.DAO.ReminderDAO;
-import com.example.khojak.POJO.PersonalReminder;
+import com.example.khojak.LocationReminder.DAO.ReminderDAO;
+import com.example.khojak.LocationReminder.POJO.PersonalReminder;
 
 @Database(entities = {PersonalReminder.class}, version = 1)
 public abstract class ReminderDatabase extends RoomDatabase {

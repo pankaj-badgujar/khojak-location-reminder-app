@@ -6,4 +6,6 @@
     <color name="popUpColor">#F1F8E9</color>
     <color name="exit">#404B47</color>
     <color name="white">#ffffff</color>
+    <color name="reminderCardTextBg">#ff6b81</color>
+    <color name="trackerCardTextBg">#778beb</color>
 </resources>

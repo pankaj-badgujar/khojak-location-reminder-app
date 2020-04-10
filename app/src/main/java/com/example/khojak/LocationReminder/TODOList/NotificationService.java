@@ -1,7 +1,6 @@
-package com.example.khojak.TODOList;
+package com.example.khojak.LocationReminder.TODOList;
 
 import android.Manifest;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
@@ -17,13 +16,10 @@ import android.os.Bundle;
 import android.os.IBinder;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-import com.example.khojak.POJO.PersonalReminder;
+import com.example.khojak.LocationReminder.POJO.PersonalReminder;
 import com.example.khojak.R;
 
 import java.util.List;

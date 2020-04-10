@@ -10,7 +10,7 @@
     android:background="@color/colorPrimary"
     android:gravity="center"
     android:theme="@style/AppTheme.ReminderInfo"
-    tools:context=".TODOList.TODOListPersonal">
+    tools:context=".LocationReminder.TODOList.TODOListPersonal">
 
     <ImageView
         android:layout_width="wrap_content"
@@ -71,7 +71,7 @@
                         android:backgroundTint="@color/colorPrimary"
                         android:onClick="onSetLocationPressed"
                         android:text="@string/set_location_txt"
-                        android:drawableLeft="@drawable/ic_add_black_24dp"
+                        android:drawableLeft="@drawable/ic_add_location_black_24dp"
                         android:drawablePadding="20dp"
                         android:textColor="@color/white" />
 

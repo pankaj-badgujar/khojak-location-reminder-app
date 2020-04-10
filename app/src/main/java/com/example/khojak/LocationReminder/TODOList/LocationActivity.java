@@ -1,4 +1,4 @@
-package com.example.khojak.TODOList;
+package com.example.khojak.LocationReminder.TODOList;
 
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;

@@ -1,4 +1,4 @@
-package com.example.khojak.POJO;
+package com.example.khojak.LocationReminder.POJO;
 
 import android.location.Location;
 import android.os.Parcel;

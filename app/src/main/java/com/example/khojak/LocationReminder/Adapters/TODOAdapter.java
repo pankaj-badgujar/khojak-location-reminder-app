@@ -1,4 +1,4 @@
-package com.example.khojak.Adapters;
+package com.example.khojak.LocationReminder.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.khojak.POJO.PersonalReminder;
+import com.example.khojak.LocationReminder.POJO.PersonalReminder;
 import com.example.khojak.R;
 
 import java.util.ArrayList;

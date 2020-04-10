@@ -14,3 +14,5 @@
 /captures
 .externalNativeBuild
 .cxx
+.idea/gradle.xml
+.idea/

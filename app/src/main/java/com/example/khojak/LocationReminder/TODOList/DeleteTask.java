@@ -1,9 +1,9 @@
-package com.example.khojak.TODOList;
+package com.example.khojak.LocationReminder.TODOList;
 
 import android.os.AsyncTask;
 
-import com.example.khojak.Database.ReminderDatabase;
-import com.example.khojak.POJO.PersonalReminder;
+import com.example.khojak.LocationReminder.Database.ReminderDatabase;
+import com.example.khojak.LocationReminder.POJO.PersonalReminder;
 
 import java.lang.ref.WeakReference;
 

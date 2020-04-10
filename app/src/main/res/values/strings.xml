@@ -9,4 +9,7 @@
     <string name="add_submit">Add</string>
     <string name="exit">Exit</string>
     <string name="set_location_txt">Set Location</string>
+    <string name="title_activity_home_page">HomePage</string>
+    <string name="location_tracker">Location Tracker</string>
+    <string name="location_reminder">Location Reminder</string>
 </resources>
