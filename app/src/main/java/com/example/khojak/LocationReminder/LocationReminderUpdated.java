@@ -124,25 +124,19 @@ public class LocationReminderUpdated extends AppCompatActivity {
 
     public void createReminder(View view) {
         String reminder = reminderTitle.getText().toString();
-//        if (reminder.isEmpty()) {
-//            reminderTitle.setError(errorText);
-//        } else if (location == null) {
-//            Toast.makeText(this, " Location cannot be empty.",
-//                    Toast.LENGTH_LONG).show();
-//        } else {
-
-        //just for testing without location
-        location = new Location("");//provider name is unnecessary
-        location.setLatitude(0.0d);
-        location.setLongitude(0.0d);
+        if (reminder.isEmpty()) {
+            reminderTitle.setError(errorText);
+        } else if (location == null) {
+            Toast.makeText(this, " Location cannot be empty.",
+                    Toast.LENGTH_LONG).show();
+        } else {
         PersonalReminder personalReminder = new PersonalReminder(reminder, location);
-
-
         reminderViewModel.addReminder(personalReminder);
         this.location = null;
         inputDialog.dismiss();
-//        }
+        }
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
