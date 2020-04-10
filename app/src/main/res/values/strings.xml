@@ -12,4 +12,5 @@
     <string name="title_activity_home_page">HomePage</string>
     <string name="location_tracker">Location Tracker</string>
     <string name="location_reminder">Location Reminder</string>
+    <string name="title_activity_location_reminder_updated">LocationReminderUpdated</string>
 </resources>

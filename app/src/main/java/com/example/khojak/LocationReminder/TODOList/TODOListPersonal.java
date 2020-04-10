@@ -65,7 +65,7 @@ public class TODOListPersonal extends AppCompatActivity {
                 reminderTitle = promptView.findViewById(R.id.urlName);
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 
-                // set activity_input_promptut_prompt.xml to be the layout file of the inputDialog builder
+                // set activity_reminder_info.xml to be the layout file of the inputDialog builder
                 alertDialogBuilder.setView(promptView);
 
                 // setup a dialog window
