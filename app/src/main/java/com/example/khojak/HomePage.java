@@ -7,7 +7,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.example.khojak.LocationReminder.TODOList.TODOListPersonal;
+import com.example.khojak.LocationReminder.LocationReminderUpdated;
 import com.example.khojak.LocationTracker.LocationTracker;
 
 public class HomePage extends AppCompatActivity {
@@ -21,7 +21,8 @@ public class HomePage extends AppCompatActivity {
     }
 
     public void openLocationReminderActivity(View view){
-        startActivity(new Intent(this, TODOListPersonal.class));
+//        startActivity(new Intent(this, TODOListPersonal.class));
+        startActivity(new Intent(this, LocationReminderUpdated.class));
     }
 
     public void openLocationTrackerActivity(View view){

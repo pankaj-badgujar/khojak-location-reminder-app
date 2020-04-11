@@ -1,5 +1,6 @@
 package com.example.khojak.LocationReminder.DAO;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -24,4 +25,7 @@ public interface ReminderDAO {
 
     @Delete
     void delete(PersonalReminder data);
+
+    @Query("SELECT * from ReminderData")
+    LiveData<List<PersonalReminder>> getAllReminders();
 }

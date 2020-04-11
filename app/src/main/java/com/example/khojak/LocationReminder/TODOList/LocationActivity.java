@@ -1,14 +1,14 @@
 package com.example.khojak.LocationReminder.TODOList;
 
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import com.example.khojak.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -60,7 +60,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         double lat = location.getLatitude();
         double lon = location.getLongitude();
         LatLng latLng1=new LatLng(lat,lon);

@@ -4,7 +4,7 @@
     <string name="title_activity_location">Map</string>
     <string name="close">Close</string>
     <string name="reminder_prompt_title">Set a reminder</string>
-    <string name="reminder">Add title</string>
+    <string name="reminder">Remind me about</string>
     <string name="button_clear">Clear</string>
     <string name="add_submit">Add</string>
     <string name="exit">Exit</string>
