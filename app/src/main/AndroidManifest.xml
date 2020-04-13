@@ -21,10 +21,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".LocationReminder.LocationReminderUpdated"
             android:label="@string/location_reminder"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".LocationTracker.LocationTracker"
             android:label="@string/location_tracker"
@@ -33,11 +40,6 @@
             android:name=".HomePage"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".LocationReminder.TODOList.ReminderInfo" />
         <!--
@@ -51,10 +53,6 @@
         <activity
             android:name=".LocationReminder.TODOList.LocationActivity"
             android:label="@string/title_activity_location" />
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".LocationReminder.TODOList.TODOListPersonal"
             android:label="@string/location_reminder"

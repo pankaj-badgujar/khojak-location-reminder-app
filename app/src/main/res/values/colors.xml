@@ -8,4 +8,7 @@
     <color name="white">#ffffff</color>
     <color name="reminderCardTextBg">#ff6b81</color>
     <color name="trackerCardTextBg">#778beb</color>
+    <color name="loginBackgroundColor">#dfe4ea</color>
+    <color name="green">#20bf6b</color>
+    <color name="orange">#ff6348</color>
 </resources>
