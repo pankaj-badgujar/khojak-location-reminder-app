@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.khojak.LocationReminder.Adapters.ReminderAdapter;
 import com.example.khojak.LocationReminder.POJO.PersonalReminder;
 import com.example.khojak.LocationReminder.TODOList.LocationActivity;
+import com.example.khojak.LocationReminder.TODOList.NotificationService;
 import com.example.khojak.LocationReminder.ViewModel.ReminderViewModel;
 import com.example.khojak.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -43,10 +44,11 @@ public class LocationReminderUpdated extends AppCompatActivity {
     private final static String errorText = "This field cannot be empty.";
     private TextView radiusText;
     private SeekBar radiusSeekBar;
-    private static int reminderRadius;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Intent intent = new Intent(this, NotificationService.class);
+        startService(intent);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_reminder_updated);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -60,7 +62,7 @@ public class LocationReminderUpdated extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         reminderViewModel = ViewModelProviders.of(this).get(ReminderViewModel.class);
-        reminderViewModel.getAllReminders().observe(this, reminders -> adapter.setReminders(reminders));
+        reminderViewModel.getAllReminders().observe(this, adapter::setReminders);
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -88,27 +90,24 @@ public class LocationReminderUpdated extends AppCompatActivity {
         });
 
         FloatingActionButton fab = findViewById(R.id.createReminderBtn);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // get activity_reminder_info.xml as prompt
-                LayoutInflater layoutInflater = LayoutInflater.from(context);
-                final View promptView = layoutInflater.inflate(R.layout.activity_reminder_info, null);
-                reminderTitle = promptView.findViewById(R.id.urlName);
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        fab.setOnClickListener(view -> {
+            // get activity_reminder_info.xml as prompt
+            LayoutInflater layoutInflater = LayoutInflater.from(context);
+            final View promptView = layoutInflater.inflate(R.layout.activity_reminder_info, null);
+            reminderTitle = promptView.findViewById(R.id.urlName);
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 
-                // set activity_reminder_info.xml to be the layout file of the inputDialog builder
-                alertDialogBuilder.setView(promptView);
+            // set activity_reminder_info.xml to be the layout file of the inputDialog builder
+            alertDialogBuilder.setView(promptView);
 
-                // setup a dialog window
-                alertDialogBuilder.setCancelable(true);
+            // setup a dialog window
+            alertDialogBuilder.setCancelable(true);
 
-                // create an alert dialog
-                inputDialog = alertDialogBuilder.create();
+            // create an alert dialog
+            inputDialog = alertDialogBuilder.create();
 
-                inputDialog.show();
+            inputDialog.show();
 
-            }
         });
     }
 
@@ -162,7 +161,7 @@ public class LocationReminderUpdated extends AppCompatActivity {
     }
 
     public void updateRadiusText(int newRadius){
-        radiusText.setText("Radius (in miles) : " + newRadius);
+        radiusText.setText("Radius (in Kms) : " + newRadius);
     }
 
     SeekBar.OnSeekBarChangeListener radiusSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
@@ -195,14 +194,16 @@ public class LocationReminderUpdated extends AppCompatActivity {
         radiusSeekBar = promptView.findViewById(R.id.radiusSeekBar);
         radiusSeekBar.setOnSeekBarChangeListener(radiusSeekBarChangeListener);
         radiusText = promptView.findViewById(R.id.radiusText);
+        radiusSeekBar.setProgress(NotificationService.reminderRadius);
         updateRadiusText(radiusSeekBar.getProgress());
 
         // setup a dialog window
         radiusAlertDialogBuilder
                 .setCancelable(true)
                 .setPositiveButton("Apply", ((dialog, id) ->{
-                    reminderRadius = radiusSeekBar.getProgress();
-                    Toast.makeText(this,"Radius set to "+reminderRadius,Toast.LENGTH_SHORT).show();
+                    NotificationService.reminderRadius = radiusSeekBar.getProgress();
+                    Toast.makeText(this,"Radius set to "+
+                            NotificationService.reminderRadius,Toast.LENGTH_SHORT).show();
                 }
                 ))
                 .setNegativeButton("Cancel", ((dialog, id) -> dialog.cancel() ));

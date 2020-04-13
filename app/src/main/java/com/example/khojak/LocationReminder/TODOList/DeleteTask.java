@@ -9,11 +9,11 @@ import java.lang.ref.WeakReference;
 
 public class DeleteTask extends AsyncTask<Void, Void, Boolean> {
 
-    private WeakReference<TODOListPersonal> context;
+    private WeakReference<NotificationService> context;
     private PersonalReminder data;
     private ReminderDatabase database;
 
-    public DeleteTask(TODOListPersonal context, PersonalReminder data) {
+    public DeleteTask(NotificationService context, PersonalReminder data) {
         this.context = new WeakReference<>(context);
         this.data = data;
     }

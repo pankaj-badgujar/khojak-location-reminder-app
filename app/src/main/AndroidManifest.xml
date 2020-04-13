@@ -59,6 +59,7 @@
             android:name=".LocationReminder.TODOList.TODOListPersonal"
             android:label="@string/location_reminder"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".LocationReminder.TODOList.ReminderLocationView" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

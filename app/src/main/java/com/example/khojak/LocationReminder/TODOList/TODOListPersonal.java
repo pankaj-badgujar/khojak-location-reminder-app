@@ -41,8 +41,6 @@ public class TODOListPersonal extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        Intent intent = new Intent(this, NotificationService.class);
-        startService(intent);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo_personal);
 
