@@ -17,4 +17,7 @@
     <string name="action_sign_in">Existing user ?  Login</string>
     <string name="khojak_logo">khojak logo</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

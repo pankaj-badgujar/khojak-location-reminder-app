@@ -7,7 +7,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import edu.neu.khojak.LocationReminder.LocationReminderUpdated;
+import edu.neu.khojak.LocationReminder.CombinedReminders;
 import edu.neu.khojak.LocationTracker.LocationTracker;
 
 public class HomePage extends AppCompatActivity {
@@ -22,8 +22,10 @@ public class HomePage extends AppCompatActivity {
 
     public void openLocationReminderActivity(View view){
 //        startActivity(new Intent(this, TODOListPersonal.class));
-        startActivity(new Intent(this, LocationReminderUpdated.class));
+//        startActivity(new Intent(this, LocationReminderUpdated.class));
+        startActivity(new Intent(this, CombinedReminders.class));
     }
+
 
     public void openLocationTrackerActivity(View view){
         startActivity(new Intent(this, LocationTracker.class));
