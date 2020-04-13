@@ -13,4 +13,8 @@
     <string name="location_tracker">Location Tracker</string>
     <string name="location_reminder">Location Reminder</string>
     <string name="app_id">khojak-gdxut</string>
+    <string name="prompt_username">Username</string>
+    <string name="action_sign_up">New user ?  Register</string>
+    <string name="action_sign_in">Existing user ?  Login</string>
+    <string name="khojak_logo">khojak logo</string>
 </resources>
