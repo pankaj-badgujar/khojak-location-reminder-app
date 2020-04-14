@@ -23,5 +23,8 @@ public class LoginActivity extends AppCompatActivity {
     public void onLoginPressed(View view){
         Toast.makeText(this,"Login pressed", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, HomePage.class));
+        finish();
     }
+
+
 }

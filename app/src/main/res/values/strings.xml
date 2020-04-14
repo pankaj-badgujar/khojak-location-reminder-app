@@ -16,6 +16,9 @@
     <string name="action_sign_up">New user ?  Register</string>
     <string name="action_sign_in">Existing user ?  Login</string>
     <string name="khojak_logo">khojak logo</string>
+    <string name="title_activity_reminders">Reminders</string>
+    <string name="tab_text_1">Personal Reminders</string>
+    <string name="tab_text_2">Group Reminders</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

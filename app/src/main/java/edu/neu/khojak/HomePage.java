@@ -1,9 +1,11 @@
 package edu.neu.khojak;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -31,4 +33,30 @@ public class HomePage extends AppCompatActivity {
         startActivity(new Intent(this, LocationTracker.class));
     }
 
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        // setup a dialog window
+        alertDialogBuilder
+                .setMessage("Are you sure you want to exit?")
+                .setCancelable(false)
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .setPositiveButton("Yes, Exit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        System.exit(0);
+                    }
+                });
+
+        // create an alert dialog
+        AlertDialog exitConfirmationDialog = alertDialogBuilder.create();
+
+        exitConfirmationDialog.show();
+    }
 }
