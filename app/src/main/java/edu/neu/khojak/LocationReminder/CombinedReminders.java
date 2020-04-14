@@ -16,14 +16,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import edu.neu.khojak.LocationReminder.Adapters.ReminderAdapter;
+import edu.neu.khojak.LocationReminder.Adapters.SectionsPagerAdapter;
 import edu.neu.khojak.LocationReminder.POJO.PersonalReminder;
 import edu.neu.khojak.LocationReminder.TODOList.LocationActivity;
 import edu.neu.khojak.LocationReminder.ViewModel.ReminderViewModel;
-import edu.neu.khojak.LocationReminder.Adapters.SectionsPagerAdapter;
 import edu.neu.khojak.R;
 
 public class CombinedReminders extends AppCompatActivity implements PersonalRemindersFragment.OnFragmentInteractionListener {
@@ -63,8 +63,8 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
 
 
 
-        FloatingActionButton fab = findViewById(R.id.createPersonalReminderBtn);
-        fab.setOnClickListener(view -> {
+        FloatingActionButton addPersonalReminderBtn = findViewById(R.id.addPersonalReminderBtn);
+        addPersonalReminderBtn.setOnClickListener(view -> {
             // get activity_reminder_info.xml as prompt
             LayoutInflater layoutInflater = LayoutInflater.from(context);
             final View promptView = layoutInflater.inflate(R.layout.activity_reminder_info, null);
@@ -82,6 +82,11 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
 
             inputDialog.show();
 
+        });
+
+        FloatingActionButton addGroupReminderBtn = findViewById(R.id.addGroupReminderBtn);
+        addGroupReminderBtn.setOnClickListener(view -> {
+            Toast.makeText(this,"Group reminder pressed", Toast.LENGTH_SHORT).show();
         });
 
     }
