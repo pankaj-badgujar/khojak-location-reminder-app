@@ -20,6 +20,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <activity
+            android:name="edu.neu.khojak.LocationReminder.CombinedReminders"
+            android:label="@string/title_activity_reminders"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
         <activity android:name="edu.neu.khojak.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
