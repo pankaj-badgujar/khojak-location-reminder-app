@@ -20,8 +20,13 @@
     <string name="tab_text_1">Personal Reminders</string>
     <string name="tab_text_2">Group Reminders</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="no_reminders_set">No reminders set</string>
+    <string name="what_is_your_group_s_name">What is your group\'s name ?</string>
+    <string name="enter_group_member_s_username">Enter group member\'s username</string>
+    <string name="create_group">Create Group</string>
+    <string name="empty_field_error">Field cannot be empty</string>
+    <string name="done">Done</string>
+    <string name="add_member">Add member</string>
+
 
 </resources>

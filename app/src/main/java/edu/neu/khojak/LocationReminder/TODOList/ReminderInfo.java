@@ -15,7 +15,6 @@ import edu.neu.khojak.R;
 
 public class ReminderInfo extends AppCompatActivity {
 
-    private final static String errorText = "This field cannot be empty.";
     private EditText reminderTitle;
     private Location location;
 
@@ -36,7 +35,7 @@ public class ReminderInfo extends AppCompatActivity {
     public void createReminder(View view) {
         String reminder = reminderTitle.getText().toString();
         if(reminder.isEmpty()) {
-            reminderTitle.setError(errorText);
+            reminderTitle.setError(getString(R.string.empty_field_error));
         } else {
             PersonalReminder personalReminder = new PersonalReminder(reminder, location);
             Intent intent = new Intent();

@@ -33,7 +33,6 @@ public class TODOListPersonal extends AppCompatActivity {
     private EditText reminderTitle;
     private Location location;
     private final static String emptyText = "";
-    private final static String errorText = "This field cannot be empty.";
 
     public static void addToList(List<PersonalReminder> data) {
         adapter.addAll(data);
@@ -116,7 +115,7 @@ public class TODOListPersonal extends AppCompatActivity {
     public void createReminder(View view) {
         String reminder = reminderTitle.getText().toString();
         if (reminder.isEmpty()) {
-            reminderTitle.setError(errorText);
+            reminderTitle.setError(getString(R.string.empty_field_error));
         } else if (location == null) {
             Toast.makeText(this, " Location cannot be empty.",
                     Toast.LENGTH_LONG).show();
