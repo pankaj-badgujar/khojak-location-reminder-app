@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,7 +40,7 @@ public class PersonalRemindersFragment extends Fragment {
 
 
     private View v;
-    private RecyclerView recyclerView;
+    private EmptyRecyclerView recyclerView;
     private ReminderViewModel reminderViewModel;
 
     // TODO: Rename and change types of parameters
@@ -47,6 +48,7 @@ public class PersonalRemindersFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private TextView noRemindersMsg;
 
     public PersonalRemindersFragment() {
         // Required empty public constructor
@@ -88,10 +90,12 @@ public class PersonalRemindersFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
 
-
+        noRemindersMsg = v.findViewById(R.id.noReminderSetMsg);
+        recyclerView.setEmptyView(noRemindersMsg);
 
         reminderViewModel = ViewModelProviders.of(this).get(ReminderViewModel.class);
         reminderViewModel.getAllReminders().observe(getViewLifecycleOwner(), reminders -> adapter.setReminders(reminders));
+
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
