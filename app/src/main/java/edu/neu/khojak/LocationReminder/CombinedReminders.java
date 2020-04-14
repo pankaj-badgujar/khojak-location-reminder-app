@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.material.tabs.TabLayout;
 
 import edu.neu.khojak.LocationReminder.Adapters.ReminderAdapter;
@@ -72,7 +73,7 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
         reminderViewModel = ViewModelProviders.of(this).get(ReminderViewModel.class);
         reminderViewModel.getAllReminders().observe(this, reminders -> adapter.setReminders(reminders));
 
-
+        FloatingActionsMenu fabMenu = findViewById(R.id.fabMenu);
 
         FloatingActionButton addPersonalReminderBtn = findViewById(R.id.addPersonalReminderBtn);
         addPersonalReminderBtn.setOnClickListener(view -> {
@@ -92,12 +93,14 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
             inputDialog = alertDialogBuilder.create();
 
             inputDialog.show();
+            fabMenu.collapse();
 
         });
 
         FloatingActionButton addGroupReminderBtn = findViewById(R.id.addGroupReminderBtn);
         addGroupReminderBtn.setOnClickListener(view -> {
             Toast.makeText(this,"Group reminder pressed", Toast.LENGTH_SHORT).show();
+            fabMenu.collapse();
         });
 
     }

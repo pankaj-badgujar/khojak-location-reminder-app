@@ -41,7 +41,8 @@
         android:layout_alignParentBottom="true"
         app:fab_addButtonColorNormal="@android:color/holo_green_light"
         app:fab_addButtonColorPressed="@android:color/holo_green_dark"
-        app:fab_labelStyle="@style/customFAB">
+        app:fab_labelStyle="@style/customFAB"
+        android:id="@+id/fabMenu">
 
 
         <com.getbase.floatingactionbutton.FloatingActionButton
