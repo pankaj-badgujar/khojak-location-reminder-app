@@ -1,7 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-</LinearLayout>
+
+
+    <Button
+        android:id="@+id/createGroupBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/create_group"
+        android:background="@android:color/holo_blue_dark"
+        android:textColor="@color/white"
+        android:layout_marginHorizontal="10dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginVertical="10dp"
+        android:onClick="createGroup"
+        />
+
+    <edu.neu.khojak.LocationReminder.EmptyRecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/createGroupBtn"
+        />
+
+
+</RelativeLayout>

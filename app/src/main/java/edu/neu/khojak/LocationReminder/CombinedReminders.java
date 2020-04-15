@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.material.tabs.TabLayout;
 
 import edu.neu.khojak.LocationReminder.Adapters.ReminderAdapter;
@@ -43,7 +44,6 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
     private ReminderViewModel reminderViewModel;
     private Location location;
     private final static String emptyText = "";
-    private final static String errorText = "This field cannot be empty.";
     private TextView radiusText;
     private SeekBar radiusSeekBar;
     private static int reminderRadius;
@@ -72,7 +72,7 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
         reminderViewModel = ViewModelProviders.of(this).get(ReminderViewModel.class);
         reminderViewModel.getAllReminders().observe(this, reminders -> adapter.setReminders(reminders));
 
-
+        FloatingActionsMenu fabMenu = findViewById(R.id.fabMenu);
 
         FloatingActionButton addPersonalReminderBtn = findViewById(R.id.addPersonalReminderBtn);
         addPersonalReminderBtn.setOnClickListener(view -> {
@@ -92,12 +92,14 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
             inputDialog = alertDialogBuilder.create();
 
             inputDialog.show();
+            fabMenu.collapse();
 
         });
 
         FloatingActionButton addGroupReminderBtn = findViewById(R.id.addGroupReminderBtn);
         addGroupReminderBtn.setOnClickListener(view -> {
             Toast.makeText(this,"Group reminder pressed", Toast.LENGTH_SHORT).show();
+            fabMenu.collapse();
         });
 
     }
@@ -122,7 +124,7 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
     public void createReminder(View view) {
         String reminder = reminderTitle.getText().toString();
         if (reminder.isEmpty()) {
-            reminderTitle.setError(errorText);
+            reminderTitle.setError(getString(R.string.empty_field_error));
         } else if (location == null) {
             Toast.makeText(context, " Location cannot be empty.",
                     Toast.LENGTH_LONG).show();
@@ -220,5 +222,10 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    public void createGroup(View view){
+        startActivity(new Intent(this, CreateGroup.class));
+        Toast.makeText(context, "create group pressed", Toast.LENGTH_SHORT).show();
     }
 }

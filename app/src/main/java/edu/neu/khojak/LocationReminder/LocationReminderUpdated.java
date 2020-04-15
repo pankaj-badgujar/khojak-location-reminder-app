@@ -24,12 +24,12 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import edu.neu.khojak.LocationReminder.Adapters.ReminderAdapter;
 import edu.neu.khojak.LocationReminder.POJO.PersonalReminder;
 import edu.neu.khojak.LocationReminder.TODOList.LocationActivity;
 import edu.neu.khojak.LocationReminder.ViewModel.ReminderViewModel;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import edu.neu.khojak.R;
 
 public class LocationReminderUpdated extends AppCompatActivity {
@@ -41,7 +41,6 @@ public class LocationReminderUpdated extends AppCompatActivity {
     private EditText reminderTitle;
     private Location location;
     private final static String emptyText = "";
-    private final static String errorText = "This field cannot be empty.";
     private TextView radiusText;
     private SeekBar radiusSeekBar;
     private static int reminderRadius;
@@ -133,7 +132,7 @@ public class LocationReminderUpdated extends AppCompatActivity {
     public void createReminder(View view) {
         String reminder = reminderTitle.getText().toString();
         if (reminder.isEmpty()) {
-            reminderTitle.setError(errorText);
+            reminderTitle.setError(getString(R.string.empty_field_error));
         } else if (location == null) {
             Toast.makeText(this, " Location cannot be empty.",
                     Toast.LENGTH_LONG).show();
