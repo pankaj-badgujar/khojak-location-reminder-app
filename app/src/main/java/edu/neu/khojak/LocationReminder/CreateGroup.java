@@ -13,20 +13,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.Task;
-import com.mongodb.stitch.android.core.auth.StitchUser;
-import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoCollection;
-import com.mongodb.stitch.core.auth.providers.anonymous.AnonymousCredential;
 
 import org.bson.Document;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 import edu.neu.khojak.R;
@@ -90,10 +83,8 @@ public class CreateGroup extends AppCompatActivity {
             Toast.makeText(this, usernameToBeAdded +" already in the group",
                     Toast.LENGTH_SHORT).show();
         }
-        usernamesList.add(usernameToBeAdded);
-        arrayAdapter.notifyDataSetChanged();
+
         authenticateUser(usernameToBeAdded);
-        groupMemberName.setText("");
     }
 
     private void authenticateUser(String userName) {
@@ -104,12 +95,13 @@ public class CreateGroup extends AppCompatActivity {
             fetch.set(Util.userCollection.findOne(document));
             fetch.get().addOnCompleteListener(fetchTask -> {
                 if (fetchTask.isSuccessful() && fetchTask.getResult() != null) {
+                    usernamesList.add(userName);
+                    arrayAdapter.notifyDataSetChanged();
+                    groupMemberName.setText("");
                     Toast.makeText(this, userName +" added", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(this, userName +" does not exist",
                             Toast.LENGTH_SHORT).show();
-                    usernamesList.remove(userName);
-                    arrayAdapter.notifyDataSetChanged();
                 }
             });
         });
