@@ -1,21 +1,23 @@
 package edu.neu.khojak.LocationReminder.TODOList;
 
-import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 
 import androidx.fragment.app.FragmentActivity;
-
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
+import edu.neu.khojak.LocationReminder.POJO.PersonalReminder;
 import edu.neu.khojak.R;
 
-public class LocationActivity extends FragmentActivity implements OnMapReadyCallback {
+public class ReminderLocationView extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private PersonalReminder reminder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +27,9 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        Bundle bundle = getIntent().getExtras();
+        reminder = bundle.getParcelable("reminder");
     }
 
 
@@ -41,19 +46,13 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                Intent intent = new Intent();
-                Location location = new Location("");
-                location.setLatitude(latLng.latitude);
-                location.setLongitude(latLng.longitude);
-                intent.putExtra("location", location);
-                setResult(1, intent);
-                finish();
-            }
-        });
-
-
+        LatLng current = new LatLng(reminder.getLatitude(),reminder.getLongitude());
+        MarkerOptions marker = new MarkerOptions();
+        marker.position(current);
+        marker.title(reminder.getTitle());
+        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+        mMap.addMarker(marker);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(current));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(10.0f));
     }
 }

@@ -12,11 +12,22 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.Task;
+import com.mongodb.stitch.android.core.auth.StitchUser;
+import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoCollection;
+import com.mongodb.stitch.core.auth.providers.anonymous.AnonymousCredential;
+
+import org.bson.Document;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 import edu.neu.khojak.R;
 
@@ -34,7 +45,7 @@ public class CreateGroup extends AppCompatActivity {
         setContentView(R.layout.activity_create_group);
 
         usernamesList = new ArrayList<>();
-        usernamesList.add("pankaj");
+        usernamesList.add(Util.userName);
         groupName = findViewById(R.id.groupTitle);
         groupMemberName = findViewById(R.id.newMemberEditText);
         groupMemberList = findViewById(R.id.listOfGroupMembers);
@@ -75,11 +86,33 @@ public class CreateGroup extends AppCompatActivity {
         String usernameToBeAdded = groupMemberName.getText().toString();
         if(usernameToBeAdded.trim().isEmpty()){
             groupMemberName.setError(getString(R.string.empty_field_error));
+        } else if (usernamesList.contains(usernameToBeAdded)) {
+            Toast.makeText(this, usernameToBeAdded +" already in the group",
+                    Toast.LENGTH_SHORT).show();
         }
         usernamesList.add(usernameToBeAdded);
         arrayAdapter.notifyDataSetChanged();
-        Toast.makeText(this, usernameToBeAdded+" added", Toast.LENGTH_SHORT).show();
+        authenticateUser(usernameToBeAdded);
         groupMemberName.setText("");
+    }
+
+    private void authenticateUser(String userName) {
+
+        Document document = new Document("username", userName);
+        AtomicReference<Task<Document>> fetch = new AtomicReference<>();
+        Util.stitchUserTask.addOnCompleteListener(task -> {
+            fetch.set(Util.userCollection.findOne(document));
+            fetch.get().addOnCompleteListener(fetchTask -> {
+                if (fetchTask.isSuccessful() && fetchTask.getResult() != null) {
+                    Toast.makeText(this, userName +" added", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, userName +" does not exist",
+                            Toast.LENGTH_SHORT).show();
+                    usernamesList.remove(userName);
+                    arrayAdapter.notifyDataSetChanged();
+                }
+            });
+        });
     }
 
     public void saveDetailsAndCreateGroup(View view){
@@ -91,21 +124,50 @@ public class CreateGroup extends AppCompatActivity {
             Toast.makeText(this, "Group should have minimum 2 members",
                     Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(this,"Group created", Toast.LENGTH_LONG).show();
-            JSONObject jsonObject = new JSONObject();
-            JSONArray members = new JSONArray();
-            usernamesList.forEach(username -> members.put(username) );
-            try {
-                jsonObject.put("groupName",groupNameString);
-                jsonObject.put("groupMembers", members);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            System.out.println(jsonObject.toString());
+            Map<String, Object> map = new HashMap<>();
+            map.put("groupName",groupNameString);
+            map.put("groupMembers",usernamesList);
+            addGroup(map);
             finish();
         }
 
+    }
+
+    private void addGroup(Map data) {
+        Util.stitchUserTask.addOnCompleteListener(task -> {
+            if(task.isSuccessful()) {
+                Document document = new Document(data);
+                Util.groupCollection.insertOne(document).addOnCompleteListener( insertTask -> {
+                            if (insertTask.isSuccessful()) {
+                                Toast.makeText(this,"Group created", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(),"Insert Sucessful",Toast.LENGTH_LONG).show();
+                                List<String> users = (List<String>) data.get("groupMembers");
+                                users.forEach(user -> {
+                                    Util.userCollection.findOne(new Document("username",user))
+                                            .addOnCompleteListener(databaseUser -> {
+                                                if(databaseUser.isSuccessful()) {
+                                                    Document updatedUser = databaseUser.getResult();
+                                                    Object groupIds = updatedUser
+                                                            .get("groupIds");
+                                                    if(groupIds == null) {
+                                                        groupIds = new ArrayList<String>();
+                                                    }
+                                                    ((List<String>) groupIds).add(Util.getId(insertTask.
+                                                            getResult().getInsertedId()));
+                                                    updatedUser.put("groupIds",groupIds);
+                                                    Util.userCollection.updateOne(new Document("username",user), updatedUser).addOnCompleteListener(updateTask -> {
+                                                        if(updateTask.isSuccessful()) {
+                                                            Toast.makeText(getApplicationContext(),"userUpdated",Toast.LENGTH_LONG).show();
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                });
+                            }
+                        }
+                );
+            }
+        });
     }
 
 

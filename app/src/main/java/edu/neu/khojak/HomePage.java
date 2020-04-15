@@ -23,8 +23,6 @@ public class HomePage extends AppCompatActivity {
     }
 
     public void openLocationReminderActivity(View view){
-//        startActivity(new Intent(this, TODOListPersonal.class));
-//        startActivity(new Intent(this, LocationReminderUpdated.class));
         startActivity(new Intent(this, CombinedReminders.class));
     }
 

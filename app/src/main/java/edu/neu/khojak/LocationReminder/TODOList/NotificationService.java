@@ -1,8 +1,10 @@
 package edu.neu.khojak.LocationReminder.TODOList;
 
 import android.Manifest;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +33,8 @@ public class NotificationService extends Service {
     private static NotificationManager notificationManager;
     private static NotificationService context;
     private static Location lastLocation;
+    private final static String notificationTitle = "Notification from Kojak";
+    public static int reminderRadius = 1;
 
     //Consumer to call the personal Reminder for the location
     private Consumer<List<PersonalReminder>> reminder = NotificationService::checkLocation;
@@ -74,17 +78,28 @@ public class NotificationService extends Service {
     }
 
     private static void createNotification(PersonalReminder data) {
+        Intent intent = new Intent(context,ReminderLocationView.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra("reminder", data);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent,
+                PendingIntent.FLAG_ONE_SHOT);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context,
                 channelId)
-                .setSmallIcon(R.drawable.ic_close_black_24dp)
-                .setContentTitle(data.getTitle())
-                .setContentText("Hello World!")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(notificationTitle)
+                .setContentText(data.getTitle())
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setAutoCancel(true);
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent);
 
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        new DeleteTask(context,data).execute();
+        Notification notification = builder.build();
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
         // notificationId is a unique int for each notification that you must define
-        notificationManager.notify(3, builder.build());
+        notificationManager.notify(data.getId(), notification);
     }
 
     @Override
@@ -99,7 +114,7 @@ public class NotificationService extends Service {
     }
 
     private static boolean shouldLocationCreateNotification(Location location) {
-        return location.distanceTo(lastLocation) <= 1000;
+        return location.distanceTo(lastLocation) <= ( reminderRadius * 1000 );
     }
 
     class LocationTracker implements LocationListener {
