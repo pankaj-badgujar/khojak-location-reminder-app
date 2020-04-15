@@ -1,8 +1,8 @@
-package com.example.khojak.LocationReminder.POJO;
+package edu.neu.khojak.LocationReminder.POJO;
 
 import java.util.List;
 
-class Group {
+public class Group {
 
     private final long id;
     private long name;

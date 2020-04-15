@@ -1,14 +1,8 @@
-package com.example.khojak.LocationReminder.TODOList;
+package edu.neu.khojak.LocationReminder.TODOList;
 
-import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 
 import androidx.fragment.app.FragmentActivity;
-
-import com.example.khojak.LocationReminder.POJO.PersonalReminder;
-import com.example.khojak.R;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -16,6 +10,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import edu.neu.khojak.LocationReminder.POJO.PersonalReminder;
+import edu.neu.khojak.R;
 
 public class ReminderLocationView extends FragmentActivity implements OnMapReadyCallback {
 

@@ -1,9 +1,11 @@
-package com.example.khojak.LocationReminder.POJO;
+package edu.neu.khojak.LocationReminder.POJO;
 
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.neu.khojak.LocationReminder.POJO.Group;
 
 public class User {
 

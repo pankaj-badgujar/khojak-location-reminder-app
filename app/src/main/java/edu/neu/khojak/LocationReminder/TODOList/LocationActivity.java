@@ -1,22 +1,15 @@
 package edu.neu.khojak.LocationReminder.TODOList;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import edu.neu.khojak.R;
 
@@ -55,8 +48,8 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                 Location location = new Location("");
                 location.setLatitude(latLng.latitude);
                 location.setLongitude(latLng.longitude);
-                intent.putExtra("location",location);
-                setResult(1,intent);
+                intent.putExtra("location", location);
+                setResult(1, intent);
                 finish();
             }
         });
