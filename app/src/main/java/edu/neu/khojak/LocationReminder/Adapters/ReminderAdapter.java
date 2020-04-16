@@ -58,16 +58,18 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.LinkHo
             super(itemView);
             reminderTitle = itemView.findViewById(R.id.customListItemTitle);
             reminderLocation = itemView.findViewById(R.id.customListItemSubTitle);
-//            itemView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    int position = getAdapterPosition();
-//                    if (listener != null && position != RecyclerView.NO_POSITION) {
-//                        listener.onLinkItemClick(reminders.get(position));
-//                    }
-//
-//                }
-//            });
+
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (listener != null && position != RecyclerView.NO_POSITION) {
+                        listener.onLinkItemClick(reminders.get(position));
+                    }
+
+                }
+            });
         }
     }
 

@@ -117,6 +117,9 @@ public class PersonalRemindersFragment extends Fragment {
         adapter.setOnItemClickListener(new ReminderAdapter.OnLinkItemClickListener() {
             @Override
             public void onLinkItemClick(PersonalReminder reminder) {
+
+                //TODO: write code here to open reminder on map if personal reminder clicked
+
                 Toast.makeText(getContext(), "Reminder opened", Toast.LENGTH_SHORT)
                         .show();
             }

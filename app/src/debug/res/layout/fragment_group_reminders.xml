@@ -35,12 +35,32 @@
         android:textStyle="italic"
         android:layout_marginLeft="10dp" />
 
-
-    <edu.neu.khojak.LocationReminder.EmptyRecyclerView
-        android:id="@+id/groupRecyclerView"
+    <RelativeLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginTop="15dp"
-        android:layout_marginBottom="5dp"
-        android:layout_height="match_parent" />
+        android:layout_marginBottom="5dp">
+
+        <edu.neu.khojak.LocationReminder.EmptyRecyclerView
+            android:id="@+id/groupRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/noGroupsCreatedMsg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="200dp"
+            android:text="@string/no_groups_created"
+            android:textSize="24sp"
+            android:visibility="invisible"/>
+
+    </RelativeLayout>
+
+
+
+
 
 </LinearLayout>

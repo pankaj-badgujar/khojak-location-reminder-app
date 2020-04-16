@@ -1,10 +1,11 @@
 package edu.neu.khojak.LocationReminder;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,8 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.neu.khojak.LocationReminder.Adapters.GroupAdapter;
-import edu.neu.khojak.LocationReminder.Adapters.ReminderAdapter;
-import edu.neu.khojak.LocationReminder.POJO.PersonalReminder;
 import edu.neu.khojak.R;
 
 public class GroupRemindersFragment extends Fragment {
@@ -32,9 +31,11 @@ public class GroupRemindersFragment extends Fragment {
      _id: id of the group,
      groupName: groupName,
      groupMember: ArrayList with all the group members of this group*/
+
+    //TODO: put notifyDataSetChanged() whenever we are ready with data on startup
     private List<Document> data = new ArrayList<>();
     private View v;
-    private ListView groupListView;
+    private TextView noGroupMsg;
     private EmptyRecyclerView groupRecyclerView;
 
     @Override
@@ -65,6 +66,7 @@ public class GroupRemindersFragment extends Fragment {
         groupRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         groupRecyclerView.setHasFixedSize(true);
 
+
         //attach adapter to
         final GroupAdapter groupAdapter = new GroupAdapter(getContext(), data);
         groupRecyclerView.setAdapter(groupAdapter);
@@ -89,15 +91,25 @@ public class GroupRemindersFragment extends Fragment {
             }
         }).attachToRecyclerView(groupRecyclerView);
 
-        groupAdapter.setOnItemClickListener(new ReminderAdapter.OnLinkItemClickListener() {
+        groupAdapter.setOnItemClickListener(new GroupAdapter.OnGroupClickListener() {
             @Override
-            public void onLinkItemClick(PersonalReminder reminder) {
+            public void onGroupClick(Document group) {
+                Intent intent = new Intent(getContext(), GroupDetails.class);
+                intent.putExtra("groupName",group.get("groupName").toString());
+                intent.putExtra("groupId", group.get("_id").toString());
 
-
-                Toast.makeText(getContext(), "Group opened", Toast.LENGTH_SHORT)
-                        .show();
+                //TODO: if possible pass entire group object using parcelable class
+                startActivity(intent);
             }
         });
+
+
+
+        //setting up 'no group created' message when no groups present
+        //TODO: just uncomment lines below this after group loading on startup works
+
+//        noGroupMsg = v.findViewById(R.id.noGroupsCreatedMsg);
+//        groupRecyclerView.setEmptyView(noGroupMsg);
 
         return v;
     }

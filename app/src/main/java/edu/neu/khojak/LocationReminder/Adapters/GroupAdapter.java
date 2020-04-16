@@ -13,14 +13,13 @@ import org.bson.Document;
 
 import java.util.List;
 
-import edu.neu.khojak.LocationReminder.POJO.PersonalReminder;
 import edu.neu.khojak.R;
 
 public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHolder>{
 
     private List<Document> groups;
     private Context context;
-    private ReminderAdapter.OnLinkItemClickListener listener;
+    private GroupAdapter.OnGroupClickListener listener;
 
 
     public GroupAdapter(Context context, List<Document> groups){
@@ -65,14 +64,25 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
             super(itemView);
             groupTitle = itemView.findViewById(R.id.customListItemTitle);
             groupMemberCount = itemView.findViewById(R.id.customListItemSubTitle);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (listener != null && position != RecyclerView.NO_POSITION) {
+                        listener.onGroupClick(groups.get(position));
+                    }
+
+                }
+            });
         }
     }
 
-    public interface OnLinkItemClickListener {
-        void onLinkItemClick(PersonalReminder reminder);
+    public interface OnGroupClickListener {
+        void onGroupClick(Document group);
     }
 
-    public void setOnItemClickListener(ReminderAdapter.OnLinkItemClickListener listener) {
+    public void setOnItemClickListener(GroupAdapter.OnGroupClickListener listener) {
         this.listener = listener;
     }
 }
