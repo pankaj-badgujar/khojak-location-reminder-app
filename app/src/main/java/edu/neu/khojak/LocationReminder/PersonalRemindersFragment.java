@@ -1,6 +1,7 @@
 package edu.neu.khojak.LocationReminder;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import edu.neu.khojak.LocationReminder.Adapters.ReminderAdapter;
 import edu.neu.khojak.LocationReminder.POJO.PersonalReminder;
+import edu.neu.khojak.LocationReminder.TODOList.ReminderLocationView;
 import edu.neu.khojak.LocationReminder.ViewModel.ReminderViewModel;
 import edu.neu.khojak.R;
 
@@ -114,15 +116,12 @@ public class PersonalRemindersFragment extends Fragment {
             }
         }).attachToRecyclerView(recyclerView);
 
-        adapter.setOnItemClickListener(new ReminderAdapter.OnLinkItemClickListener() {
-            @Override
-            public void onLinkItemClick(PersonalReminder reminder) {
-
-                //TODO: write code here to open reminder on map if personal reminder clicked
-
-                Toast.makeText(getContext(), "Reminder opened", Toast.LENGTH_SHORT)
-                        .show();
-            }
+        adapter.setOnItemClickListener(reminder -> {
+            Intent intent = new Intent(getContext(), ReminderLocationView.class);
+            intent.putExtra("reminder",reminder);
+            startActivity(intent);
+            Toast.makeText(getContext(), "Reminder opened", Toast.LENGTH_SHORT)
+                    .show();
         });
 
         return v;

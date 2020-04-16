@@ -8,6 +8,10 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import org.bson.Document;
+
+import edu.neu.khojak.LocationReminder.Util;
+
 @Entity(tableName = "ReminderData")
 public class PersonalReminder implements Parcelable {
 
@@ -15,6 +19,10 @@ public class PersonalReminder implements Parcelable {
     private int id;
     @ColumnInfo
     private String title;
+
+    public PersonalReminder(Document document) {
+        title = (String) document.get("title");
+    }
 
     public double getLatitude() {
         return latitude;

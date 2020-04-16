@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:id="@+id/reminderListLayout"
     tools:context=".LocationReminder.GroupDetails">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -21,22 +23,12 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <TextView
-        android:id="@+id/groupTitleInDetails"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textSize="40sp"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/appBarLayoutGroupDetails"/>
-
-    <TextView
-        android:id="@+id/groupIdText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/groupTitleInDetails"/>
+    <ListView
+        android:id="@+id/listOfReminders"
+        android:layout_margin="10dp"
+        android:background="@android:color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 
-</RelativeLayout>
+</LinearLayout>

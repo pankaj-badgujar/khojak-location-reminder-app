@@ -40,8 +40,12 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
     @Override
     public void onBindViewHolder(@NonNull GroupViewHolder holder, int position) {
         Document group = groups.get(position);
+        if(group == null) {
+            groups.clear();
+            return;
+        }
         String titleText = "Group : "+ group.get("groupName").toString();
-        String countText = "Group members : " + group.size();
+        String countText = "Group members : " + ((List) group.get("groupMembers")).size();
         holder.groupTitle.setText(titleText);
         holder.groupMemberCount.setText(countText);
     }
