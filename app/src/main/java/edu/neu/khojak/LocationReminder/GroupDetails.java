@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -22,6 +23,9 @@ public class GroupDetails extends AppCompatActivity {
     private List<String> reminderIds;
     private List<Document> reminders;
 
+    private TextView groupNameTitle;
+    private TextView groupMemberCount;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +36,12 @@ public class GroupDetails extends AppCompatActivity {
         reminderList = findViewById(R.id.listOfReminders);
         Intent intent = getIntent();
         Map document = (Map) intent.getSerializableExtra("group");
+
+        groupNameTitle = findViewById(R.id.groupTitleInDetails);
+        groupMemberCount = findViewById(R.id.groupMemberCountText);
+
+        groupNameTitle.setText(document.get("groupName").toString());
+        groupMemberCount.setText("Group members: " + ((List)document.get("groupMembers")).size());
 
         /** Code to populate reminders by fetching data from database **/
 

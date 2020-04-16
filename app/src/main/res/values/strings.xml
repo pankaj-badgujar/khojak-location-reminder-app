@@ -33,5 +33,7 @@
     <string name="duplicate_user">User with this username already exists! Please login</string>
     <string name="groups">Groups :</string>
     <string name="no_groups_created">No groups created</string>
+    <string name="title_activity_group_details">Group Details</string>
+
 
 </resources>

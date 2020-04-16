@@ -23,6 +23,28 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <TextView
+        android:id="@+id/groupTitleInDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textSize="40sp"
+        android:text="pankaj"
+        android:layout_gravity="center_vertical|center_horizontal" />
+
+    <TextView
+        android:id="@+id/groupMemberCountText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="pankaj"
+        android:layout_gravity="center_vertical|center_horizontal" />
+
+    <edu.neu.khojak.LocationReminder.EmptyRecyclerView
+        android:id="@+id/groupRemindersRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
     <ListView
         android:id="@+id/listOfReminders"
         android:layout_margin="10dp"
