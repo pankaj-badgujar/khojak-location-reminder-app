@@ -50,6 +50,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
         holder.groupMemberCount.setText(countText);
     }
 
+
     @Override
     public int getItemCount() {
         return groups.size();

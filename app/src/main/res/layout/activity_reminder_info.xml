@@ -31,12 +31,6 @@
         app:cardBackgroundColor="@color/popUpColor"
         app:cardCornerRadius="10dp">
 
-        <ScrollView
-            android:id="@+id/scroll_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -65,11 +59,11 @@
                     android:layout_marginBottom="5dp">
 
                     <Button
+                        android:id="@+id/setPersonalLocationBtn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="left|center_vertical"
                         android:backgroundTint="@color/colorPrimary"
-                        android:onClick="onSetLocationPressed"
                         android:text="@string/set_location_txt"
                         android:drawableLeft="@drawable/ic_add_location_black_24dp"
                         android:drawablePadding="20dp"
@@ -130,6 +124,5 @@
                 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
             </LinearLayout>
-        </ScrollView>
     </androidx.cardview.widget.CardView>
 </RelativeLayout>

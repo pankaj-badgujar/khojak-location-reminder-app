@@ -1,6 +1,7 @@
 package edu.neu.khojak.LocationReminder;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
@@ -10,8 +11,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +31,8 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.material.tabs.TabLayout;
 
+import org.bson.Document;
+
 import edu.neu.khojak.LocationReminder.Adapters.ReminderAdapter;
 import edu.neu.khojak.LocationReminder.Adapters.SectionsPagerAdapter;
 import edu.neu.khojak.LocationReminder.POJO.PersonalReminder;
@@ -34,19 +40,30 @@ import edu.neu.khojak.LocationReminder.TODOList.LocationActivity;
 import edu.neu.khojak.LocationReminder.ViewModel.ReminderViewModel;
 import edu.neu.khojak.R;
 
-public class CombinedReminders extends AppCompatActivity implements PersonalRemindersFragment.OnFragmentInteractionListener {
+public class CombinedReminders extends AppCompatActivity implements PersonalRemindersFragment.OnFragmentInteractionListener{
 
+    private AlertDialog personalReminderInputDialog;
+    private AlertDialog groupReminderInputDialog;
 
-    private AlertDialog inputDialog;
-    private EditText reminderTitle;
+    private EditText personalReminderTitle;
+    private EditText groupReminderTitle;
+
     private final Context context = this;
-    private final static int REQUEST_CODE_1 = 1;
+    private final static int PERSONAL_REMINDER_REQUEST_CODE = 1;
+    private final static int GROUP_REMINDER_REQUEST_CODE = 2;
     private ReminderViewModel reminderViewModel;
-    private Location location;
+    private Location personalReminderLocation;
+    private Location groupReminderLocation;
+
     private final static String emptyText = "";
     private TextView radiusText;
     private SeekBar radiusSeekBar;
     private static int reminderRadius;
+    private Spinner spinner;
+    private Button setPersonalLocationBtn;
+    private Button setGroupLocationBtn;
+    private String[] groupNames;
+
 
 
     @Override
@@ -79,60 +96,123 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
             // get activity_reminder_info.xml as prompt
             LayoutInflater layoutInflater = LayoutInflater.from(context);
             final View promptView = layoutInflater.inflate(R.layout.activity_reminder_info, null);
-            reminderTitle = promptView.findViewById(R.id.urlName);
+
+            personalReminderTitle = promptView.findViewById(R.id.urlName);
+            setPersonalLocationBtn = promptView.findViewById(R.id.setPersonalLocationBtn);
+
+            setPersonalLocationBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onSetLocationPressed(v, PERSONAL_REMINDER_REQUEST_CODE);
+                }
+            });
+
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 
-            // set activity_reminder_info.xml to be the layout file of the inputDialog builder
+            // set activity_reminder_info.xml to be the layout file of the personalReminderInputDialog builder
             alertDialogBuilder.setView(promptView);
 
             // setup a dialog window
             alertDialogBuilder.setCancelable(true);
 
             // create an alert dialog
-            inputDialog = alertDialogBuilder.create();
+            personalReminderInputDialog = alertDialogBuilder.create();
 
-            inputDialog.show();
+            personalReminderInputDialog.show();
             fabMenu.collapse();
 
         });
 
         FloatingActionButton addGroupReminderBtn = findViewById(R.id.addGroupReminderBtn);
         addGroupReminderBtn.setOnClickListener(view -> {
-            Toast.makeText(this,"Group reminder pressed", Toast.LENGTH_SHORT).show();
+            openGroupReminderDialog();
             fabMenu.collapse();
         });
 
     }
 
+    private void openGroupReminderDialog() {
+
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        View dialogView = layoutInflater.inflate(R.layout.group_reminder_input_dialog, null);
+
+        //initialize fields from dialog box layout
+        groupReminderTitle = dialogView.findViewById(R.id.groupReminderTitleEditText);
+        setGroupLocationBtn = dialogView.findViewById(R.id.setGroupLocationBtn);
+        setGroupLocationBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSetLocationPressed(v, GROUP_REMINDER_REQUEST_CODE);
+            }
+        });
+        spinner = dialogView.findViewById(R.id.spinner);
+
+
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
+                //TODO: instead of getResources().getStringArray(R.array.Groups) pass actual groups
+                android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.Groups) );
+
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(spinnerAdapter);
+
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setView(dialogView);
+        alertDialogBuilder.setTitle("Create new group reminder")
+        .setNegativeButton("Cancel" , null)
+        .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Document newGroupReminder = new Document();
+
+                newGroupReminder.put("title", groupReminderTitle.getText());
+                newGroupReminder.put("longitude",String.valueOf(groupReminderLocation.getLongitude()));
+                newGroupReminder.put("latitude",String.valueOf(groupReminderLocation.getLatitude()));
+
+                //TODO: we get group name here, but have to do additional work to get groupId
+                newGroupReminder.put("groupName",spinner.getSelectedItem().toString());
+
+                //TODO write code to add group reminder to database using this
+                // newGroupReminder doc created at last
+
+            }
+        });
+
+        groupReminderInputDialog = alertDialogBuilder.create();
+        groupReminderInputDialog.show();
+
+    }
+
     public void clearText(View view) {
-        reminderTitle.setText(emptyText);
+        personalReminderTitle.setText(emptyText);
     }
 
     public void closeActivity(View view) {
-        inputDialog.dismiss();
+        personalReminderInputDialog.dismiss();
     }
 
-    public void onSetLocationPressed(View view) {
+    public void onSetLocationPressed(View view, int requestCode) {
         Toast.makeText(context, "starting map activity", Toast.LENGTH_SHORT).show();
-        startActivityForResult(new Intent(context, LocationActivity.class), REQUEST_CODE_1);
+        startActivityForResult(new Intent(context, LocationActivity.class), requestCode);
     }
 
     public void exit(View view) {
-        inputDialog.dismiss();
+        personalReminderInputDialog.dismiss();
     }
 
     public void createReminder(View view) {
-        String reminder = reminderTitle.getText().toString();
+        String reminder = personalReminderTitle.getText().toString();
         if (reminder.isEmpty()) {
-            reminderTitle.setError(getString(R.string.empty_field_error));
-        } else if (location == null) {
+            personalReminderTitle.setError(getString(R.string.empty_field_error));
+        } else if (personalReminderLocation == null) {
             Toast.makeText(context, " Location cannot be empty.",
                     Toast.LENGTH_LONG).show();
         } else {
-            PersonalReminder personalReminder = new PersonalReminder(reminder, location);
+            PersonalReminder personalReminder = new PersonalReminder(reminder, personalReminderLocation);
             reminderViewModel.addReminder(personalReminder);
-            this.location = null;
-            inputDialog.dismiss();
+            this.personalReminderLocation = null;
+            personalReminderInputDialog.dismiss();
         }
     }
 
@@ -140,11 +220,19 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case REQUEST_CODE_1:
+            case PERSONAL_REMINDER_REQUEST_CODE:
                 if(data != null) {
-                    this.location = data.getParcelableExtra("location");
-                    Toast.makeText(context, location != null ? location.toString() : "",
+                    this.personalReminderLocation = data.getParcelableExtra("personalReminderLocation");
+                    Toast.makeText(context, personalReminderLocation != null ? personalReminderLocation.toString() : "",
                             Toast.LENGTH_LONG).show();
+                }
+                break;
+            case GROUP_REMINDER_REQUEST_CODE:
+                if(data != null) {
+                    this.groupReminderLocation = data.getParcelableExtra("groupReminderLocation");
+                    Toast.makeText(context, groupReminderLocation != null ? groupReminderLocation.toString() : "",
+                            Toast.LENGTH_LONG).show();
+
                 }
                 break;
             default:
@@ -180,7 +268,7 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
 
         AlertDialog.Builder radiusAlertDialogBuilder = new AlertDialog.Builder(context);
 
-        // set activity_reminder_info.xml to be the layout file of the inputDialog builder
+        // set activity_reminder_info.xml to be the layout file of the personalReminderInputDialog builder
         radiusAlertDialogBuilder.setView(promptView);
 
         radiusSeekBar = promptView.findViewById(R.id.radiusSeekBar);
@@ -224,8 +312,4 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
 
     }
 
-    public void createGroup(View view){
-        startActivity(new Intent(this, CreateGroup.class));
-        Toast.makeText(context, "create group pressed", Toast.LENGTH_SHORT).show();
-    }
 }
