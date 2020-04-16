@@ -82,9 +82,9 @@ public class CreateGroup extends AppCompatActivity {
         } else if (usernamesList.contains(usernameToBeAdded)) {
             Toast.makeText(this, usernameToBeAdded +" already in the group",
                     Toast.LENGTH_SHORT).show();
+        } else{
+            authenticateUser(usernameToBeAdded);
         }
-
-        authenticateUser(usernameToBeAdded);
     }
 
     private void authenticateUser(String userName) {

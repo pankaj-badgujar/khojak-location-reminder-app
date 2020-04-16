@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
 
 
     <Button
@@ -19,13 +18,29 @@
         android:onClick="createGroup"
         />
 
-    <ListView
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/groupHeading"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/groupListView"
+        android:text="@string/groups"
         android:layout_margin="10dp"
-        android:layout_below="@id/createGroupBtn"/>
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/deleteTip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Swipe left or right to delete groups"
+        android:textSize="14sp"
+        android:textStyle="italic"
+        android:layout_marginLeft="10dp" />
 
 
+    <edu.neu.khojak.LocationReminder.EmptyRecyclerView
+        android:id="@+id/groupRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="5dp"
+        android:layout_height="match_parent" />
 
-</RelativeLayout>
+</LinearLayout>

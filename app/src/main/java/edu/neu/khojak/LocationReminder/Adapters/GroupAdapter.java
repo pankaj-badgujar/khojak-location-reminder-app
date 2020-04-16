@@ -4,42 +4,75 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.bson.Document;
 
 import java.util.List;
 
+import edu.neu.khojak.LocationReminder.POJO.PersonalReminder;
 import edu.neu.khojak.R;
 
-public class GroupAdapter extends ArrayAdapter<Document> {
+public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHolder>{
 
-    List<Document> groupList;
-    Context context;
-    int resource;
+    private List<Document> groups;
+    private Context context;
+    private ReminderAdapter.OnLinkItemClickListener listener;
 
-    public GroupAdapter(@NonNull Context context, int resource, @NonNull List<Document> objects) {
-        super(context, resource, objects);
+
+    public GroupAdapter(Context context, List<Document> groups){
         this.context = context;
-        groupList = objects;
-        this.resource = resource;
+        this.groups = groups;
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        Document group = groupList.get(position);
+    public GroupViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         LayoutInflater layoutInflater = LayoutInflater.from(context);
-        convertView = layoutInflater.inflate(resource, parent, false);
+        View view = layoutInflater.inflate(R.layout.reminder_item, parent, false);
+        return new GroupViewHolder(view);
+    }
 
-        TextView groupTitle = convertView.findViewById(R.id.customListItemTitle);
-        groupTitle.setText(group.get("groupName").toString());
+    @Override
+    public void onBindViewHolder(@NonNull GroupViewHolder holder, int position) {
+        Document group = groups.get(position);
+        String titleText = "Group : "+ group.get("groupName").toString();
+        String countText = "Group members : " + group.size();
+        holder.groupTitle.setText(titleText);
+        holder.groupMemberCount.setText(countText);
+    }
 
-        return convertView;
+    @Override
+    public int getItemCount() {
+        return groups.size();
+    }
+
+    public Document getGroupAt(int position) {
+        return groups.get(position);
+    }
+
+    public class GroupViewHolder extends RecyclerView.ViewHolder{
+
+        TextView groupTitle;
+        TextView groupMemberCount;
+
+        public GroupViewHolder(@NonNull View itemView) {
+            super(itemView);
+            groupTitle = itemView.findViewById(R.id.customListItemTitle);
+            groupMemberCount = itemView.findViewById(R.id.customListItemSubTitle);
+        }
+    }
+
+    public interface OnLinkItemClickListener {
+        void onLinkItemClick(PersonalReminder reminder);
+    }
+
+    public void setOnItemClickListener(ReminderAdapter.OnLinkItemClickListener listener) {
+        this.listener = listener;
     }
 }
