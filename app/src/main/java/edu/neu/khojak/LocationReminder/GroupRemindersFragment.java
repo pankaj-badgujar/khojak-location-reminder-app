@@ -1,10 +1,12 @@
 package edu.neu.khojak.LocationReminder;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,7 +22,6 @@ import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import edu.neu.khojak.LocationReminder.Adapters.GroupAdapter;
 import edu.neu.khojak.R;
@@ -37,6 +38,9 @@ public class GroupRemindersFragment extends Fragment {
     private TextView noGroupMsg;
     private EmptyRecyclerView groupRecyclerView;
     private GroupAdapter groupAdapter;
+    private Button createGroupBtn;
+    private final int LAUNCH_CREATE_GROUP_REQUEST_CODE = 1;
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -85,11 +89,29 @@ public class GroupRemindersFragment extends Fragment {
         groupRecyclerView.setEmptyView(noGroupMsg);
         fetchData(groupAdapter);
 
-        // TODO Add the commented to to the function which is called when activity gets reFocused similar to onResume or onRestart
-        // fetchData(groupAdapter)
-
         // TODO Is it fine if we change the List to a set? if so change it to Set.
+
+
+
+        createGroupBtn = v.findViewById(R.id.createGroupBtn);
+        createGroupBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), CreateGroup.class);
+                startActivityForResult(intent, LAUNCH_CREATE_GROUP_REQUEST_CODE);
+            }
+        });
+
         return v;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == LAUNCH_CREATE_GROUP_REQUEST_CODE && resultCode == Activity.RESULT_OK){
+            fetchData(groupAdapter);
+        }
     }
 
     private void removeData(Document group) {
@@ -134,19 +156,19 @@ public class GroupRemindersFragment extends Fragment {
             ((List<String>) object).forEach(groupId -> {
                 Util.groupCollection.findOne(new Document("_id",new ObjectId(groupId)))
                         .addOnCompleteListener( fetchTask -> {
+
                             if(fetchTask.isSuccessful() && fetchTask.getResult() != null ) {
                                 if (data.stream().anyMatch(document ->
-                                        document.get("_id") == fetchTask.getResult().get("_id"))) {
+                                        document.get("_id").toString().equalsIgnoreCase(fetchTask.getResult().get("_id").toString()) )) {
                                     return;
                                 }
                                 data.add(fetchTask.getResult());
-                                adapter.notifyDataSetChanged();
                             }
+                            adapter.notifyDataSetChanged();
                         });
             });
         });
     }
-
     @Override
     public void onStart() {
         super.onStart();

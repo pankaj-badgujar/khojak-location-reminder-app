@@ -1,6 +1,8 @@
 package edu.neu.khojak.LocationReminder;
 
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -120,7 +122,6 @@ public class CreateGroup extends AppCompatActivity {
             map.put("groupName",groupNameString);
             map.put("groupMembers",usernamesList);
             addGroup(map);
-            finish();
         }
 
     }
@@ -132,7 +133,6 @@ public class CreateGroup extends AppCompatActivity {
                 Util.groupCollection.insertOne(document).addOnCompleteListener( insertTask -> {
                             if (insertTask.isSuccessful()) {
                                 Toast.makeText(this,"Group created", Toast.LENGTH_LONG).show();
-                                Toast.makeText(getApplicationContext(),"Insert Sucessful",Toast.LENGTH_LONG).show();
                                 List<String> users = (List<String>) data.get("groupMembers");
                                 users.forEach(user -> {
                                     Util.userCollection.findOne(new Document("username",user))
@@ -148,9 +148,14 @@ public class CreateGroup extends AppCompatActivity {
                                                             getResult().getInsertedId()));
                                                     updatedUser.put("groupIds",groupIds);
                                                     Util.userCollection.updateOne(new Document("username",user), updatedUser).addOnCompleteListener(updateTask -> {
+                                                        Intent returnIntent = new Intent();
                                                         if(updateTask.isSuccessful()) {
-                                                            Toast.makeText(getApplicationContext(),"userUpdated",Toast.LENGTH_LONG).show();
+                                                            Toast.makeText(getApplicationContext(),"user updated",Toast.LENGTH_LONG).show();
+                                                            setResult(Activity.RESULT_OK,returnIntent);
+                                                        } else{
+                                                            setResult(Activity.RESULT_CANCELED,returnIntent);
                                                         }
+                                                        finish();
                                                     });
                                                 }
                                             });

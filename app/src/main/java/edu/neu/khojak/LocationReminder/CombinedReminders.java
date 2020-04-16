@@ -223,9 +223,4 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
     public void onFragmentInteraction(Uri uri) {
 
     }
-
-    public void createGroup(View view){
-        startActivity(new Intent(this, CreateGroup.class));
-        Toast.makeText(context, "create group pressed", Toast.LENGTH_SHORT).show();
-    }
 }
