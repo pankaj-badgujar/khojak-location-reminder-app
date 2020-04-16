@@ -35,5 +35,12 @@
     <string name="no_groups_created">No groups created</string>
     <string name="title_activity_group_details">Group Details</string>
 
+    <string-array name="Groups">
+        <item>Home</item>
+        <item>Other</item>
+        <item>Work</item>
+        <item>Custom</item>
+    </string-array>
+
 
 </resources>

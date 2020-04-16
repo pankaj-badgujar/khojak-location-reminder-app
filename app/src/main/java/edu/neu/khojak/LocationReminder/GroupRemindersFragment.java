@@ -1,6 +1,7 @@
 package edu.neu.khojak.LocationReminder;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -89,17 +90,10 @@ public class GroupRemindersFragment extends Fragment {
         groupRecyclerView.setEmptyView(noGroupMsg);
         fetchData(groupAdapter);
 
-        // TODO Is it fine if we change the List to a set? if so change it to Set.
-
-
-
         createGroupBtn = v.findViewById(R.id.createGroupBtn);
-        createGroupBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), CreateGroup.class);
-                startActivityForResult(intent, LAUNCH_CREATE_GROUP_REQUEST_CODE);
-            }
+        createGroupBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), CreateGroup.class);
+            startActivityForResult(intent, LAUNCH_CREATE_GROUP_REQUEST_CODE);
         });
 
         return v;
@@ -159,7 +153,7 @@ public class GroupRemindersFragment extends Fragment {
 
                             if(fetchTask.isSuccessful() && fetchTask.getResult() != null ) {
                                 if (data.stream().anyMatch(document ->
-                                        document.get("_id").toString().equalsIgnoreCase(fetchTask.getResult().get("_id").toString()) )) {
+                                        document.get("_id").equals(fetchTask.getResult().get("_id")) )) {
                                     return;
                                 }
                                 data.add(fetchTask.getResult());
@@ -169,8 +163,19 @@ public class GroupRemindersFragment extends Fragment {
             });
         });
     }
+
+
+
+
+
     @Override
     public void onStart() {
         super.onStart();
     }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+    }
+
 }
