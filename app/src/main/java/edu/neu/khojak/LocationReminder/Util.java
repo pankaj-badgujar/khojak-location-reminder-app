@@ -1,5 +1,7 @@
 package edu.neu.khojak.LocationReminder;
 
+import android.widget.Toast;
+
 import com.google.android.gms.tasks.Task;
 import com.mongodb.stitch.android.core.Stitch;
 import com.mongodb.stitch.android.core.StitchAppClient;
