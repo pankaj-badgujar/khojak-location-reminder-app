@@ -11,20 +11,19 @@
         android:layout_height="wrap_content"
         android:padding="8dp">
         <TextView
-            android:id="@+id/reminderTitle"
+            android:id="@+id/customListItemTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="demo"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:layout_alignParentStart="true"
             android:maxLines="1"
             android:ellipsize="end"/>
 
         <TextView
-            android:id="@+id/reminderLocation"
+            android:id="@+id/customListItemSubTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/reminderTitle"/>
+            android:layout_below="@+id/customListItemTitle"/>
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

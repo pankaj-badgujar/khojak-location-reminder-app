@@ -14,26 +14,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.tasks.Task;
-import com.mongodb.stitch.android.core.Stitch;
-import com.mongodb.stitch.android.core.StitchAppClient;
-import com.mongodb.stitch.android.core.auth.StitchUser;
-import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoClient;
-import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoCollection;
-import com.mongodb.stitch.core.auth.providers.anonymous.AnonymousCredential;
 
 import org.bson.Document;
 
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 
 import edu.neu.khojak.LocationReminder.Util;
 
 public class LoginActivity extends AppCompatActivity {
 
     EditText editText;
-    private final String errorText = "Username is incorrect";
-    private final String emptyText = "Username cannot be empty";
-    private final String userAlreadyExist = "User with this username already exist Try a new one!!";
+
     public static volatile Boolean isLoggedIn = null;
 
     @Override
@@ -71,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         if (!editText.getText().toString().equals("")) {
             addUser(editText.getText().toString());
         } else {
-            editText.setError(emptyText);
+            editText.setError(getString(R.string.username_required));
         }
     }
 
@@ -95,7 +86,7 @@ public class LoginActivity extends AppCompatActivity {
                     Util.userName = userName;
                     login();
                 } else {
-                    editText.setText(errorText);
+                    editText.setText(getString(R.string.username_error));
                 }
             });
         });
@@ -115,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
                 } else {
-                    editText.setError(userAlreadyExist);
+                    editText.setError(getString(R.string.duplicate_user));
                 }
             });
         });

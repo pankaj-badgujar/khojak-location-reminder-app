@@ -28,4 +28,10 @@
     <string name="empty_field_error">Field cannot be empty</string>
     <string name="done">Done</string>
     <string name="add_member">Add member</string>
+    <string name="username_error">User does not exist! Please register</string>
+    <string name="username_required">Username required</string>
+    <string name="duplicate_user">User with this username already exists! Please login</string>
+    <string name="groups">Groups :</string>
+    <string name="no_groups_created">No groups created</string>
+
 </resources>
