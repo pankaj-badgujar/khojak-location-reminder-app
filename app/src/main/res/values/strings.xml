@@ -9,6 +9,7 @@
     <string name="add_submit">Add</string>
     <string name="exit">Exit</string>
     <string name="set_location_txt">Set Location</string>
+    <string name="set_destination_location_txt">Set Destination Location</string>
     <string name="title_activity_home_page">HomePage</string>
     <string name="location_tracker">Location Tracker</string>
     <string name="location_reminder">Location Reminder</string>
@@ -34,6 +35,7 @@
     <string name="groups">Groups :</string>
     <string name="no_groups_created">No groups created</string>
     <string name="title_activity_group_details">Group Details</string>
+    <string name="start_tracking">Start tracking</string>
 
     <string-array name="Groups">
         <item>Home</item>

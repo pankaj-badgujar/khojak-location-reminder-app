@@ -3,8 +3,13 @@ package edu.neu.khojak;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -56,5 +61,22 @@ public class HomePage extends AppCompatActivity {
         AlertDialog exitConfirmationDialog = alertDialogBuilder.create();
 
         exitConfirmationDialog.show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.homepage_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.logoutOption:
+                Toast.makeText(this,"Logout pressed", Toast.LENGTH_SHORT).show();
+                return true;
+            default:return super.onOptionsItemSelected(item);
+        }
     }
 }
