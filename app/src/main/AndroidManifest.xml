@@ -65,6 +65,12 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".LocationReminder.TODOList.ReminderLocationView" />
 
+        <activity
+            android:name="edu.neu.khojak.LocationReminder.GroupDetails"
+            android:label="@string/title_activity_group_details"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name="edu.neu.khojak.LocationReminder.CreateGroup" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
