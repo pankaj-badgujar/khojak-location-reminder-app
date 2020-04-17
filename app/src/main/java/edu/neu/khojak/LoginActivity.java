@@ -115,6 +115,7 @@ public class LoginActivity extends AppCompatActivity {
                 });
             } else {
                 editText.setError(getString(R.string.duplicate_user));
+                progressDialog.dismiss();
             }
         });
     }
