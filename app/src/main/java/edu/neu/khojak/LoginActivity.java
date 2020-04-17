@@ -71,6 +71,7 @@ public class LoginActivity extends AppCompatActivity {
             addUser(editText.getText().toString());
         } else {
             editText.setError(getString(R.string.username_required));
+            progressDialog.dismiss();
         }
     }
 
@@ -95,7 +96,8 @@ public class LoginActivity extends AppCompatActivity {
                Util.userName = userName;
                login();
            } else {
-               editText.setText(getString(R.string.username_error));
+               editText.setError(getString(R.string.username_error));
+               progressDialog.dismiss();
            }
         });
     }
