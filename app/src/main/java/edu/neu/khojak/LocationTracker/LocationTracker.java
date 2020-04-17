@@ -58,7 +58,7 @@ public class LocationTracker extends AppCompatActivity {
             Toast.makeText(this, "Location cannot be empty",
                     Toast.LENGTH_LONG).show();
         } else {
-            //TODO: create tracker
+            // TODO: create tracker
         }
 
     }

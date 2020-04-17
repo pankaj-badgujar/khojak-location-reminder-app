@@ -77,38 +77,30 @@ public class LoginActivity extends AppCompatActivity {
 
     private void authenticateUser(String userName) {
         Document document = new Document("username", userName);
-
-        AtomicReference<Task<Document>> fetch = new AtomicReference<>();
-        Util.stitchUserTask.addOnCompleteListener(task -> {
-            fetch.set(Util.userCollection.findOne(document));
-            fetch.get().addOnCompleteListener(fetchTask -> {
-                if (fetchTask.isSuccessful() && fetchTask.getResult() != null) {
-                    Util.userName = userName;
-                    login();
-                } else {
-                    editText.setText(getString(R.string.username_error));
-                }
-            });
+        Util.userCollection.findOne(document).addOnCompleteListener(fetchTask -> {
+           if(fetchTask.isSuccessful() && fetchTask.getResult() != null) {
+               Util.userName = userName;
+               login();
+           } else {
+               editText.setText(getString(R.string.username_error));
+           }
         });
     }
 
     private void addUser(String userName) {
         Document document = new Document("username", userName);
         AtomicReference<Task<Document>> fetch = new AtomicReference<>();
-        Util.stitchUserTask.addOnCompleteListener(task -> {
-            fetch.set(Util.userCollection.findOne(document));
-            fetch.get().addOnCompleteListener(fetchTask -> {
-                if (fetchTask.isSuccessful() && fetchTask.getResult() == null) {
-                    Util.userCollection.insertOne(document).addOnCompleteListener(insertTask -> {
-                        if (insertTask.isSuccessful()) {
-                            Util.userName = userName;
-                            login();
-                        }
-                    });
-                } else {
-                    editText.setError(getString(R.string.duplicate_user));
-                }
-            });
+        Util.userCollection.findOne(document).addOnCompleteListener(fetchTask -> {
+            if (fetchTask.isSuccessful() && fetchTask.getResult() == null) {
+                Util.userCollection.insertOne(document).addOnCompleteListener(insertTask -> {
+                    if (insertTask.isSuccessful()) {
+                        Util.userName = userName;
+                        login();
+                    }
+                });
+            } else {
+                editText.setError(getString(R.string.duplicate_user));
+            }
         });
     }
 

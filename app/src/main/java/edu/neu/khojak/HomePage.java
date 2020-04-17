@@ -15,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import edu.neu.khojak.LocationReminder.CombinedReminders;
+import edu.neu.khojak.LocationReminder.Service.NotificationService;
+import edu.neu.khojak.LocationReminder.Util;
 import edu.neu.khojak.LocationTracker.LocationTracker;
 
 public class HomePage extends AppCompatActivity {
@@ -25,6 +27,9 @@ public class HomePage extends AppCompatActivity {
         setContentView(R.layout.activity_home_page);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Util.fetchData();
+        Intent intent = new Intent(this, NotificationService.class);
+        startService(intent);
     }
 
     public void openLocationReminderActivity(View view){

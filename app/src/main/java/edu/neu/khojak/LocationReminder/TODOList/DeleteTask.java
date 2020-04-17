@@ -6,6 +6,7 @@ import java.lang.ref.WeakReference;
 
 import edu.neu.khojak.LocationReminder.Database.ReminderDatabase;
 import edu.neu.khojak.LocationReminder.POJO.PersonalReminder;
+import edu.neu.khojak.LocationReminder.Service.NotificationService;
 
 public class DeleteTask extends AsyncTask<Void, Void, Boolean> {
 

@@ -19,14 +19,10 @@ import edu.neu.khojak.R;
 public class GroupReminderAdapter extends RecyclerView.Adapter<GroupReminderAdapter.GroupReminderViewHolder>{
 
     private List<Document> groupReminders;
-    private List<String> reminderTitles;
     private Context context;
+    private GroupReminderAdapter.OnReminderClickListener listener;
 
 
-//    public GroupReminderAdapter(Context context, List<String> reminderTitles){
-//        this.context = context;
-//        this.reminderTitles = reminderTitles;
-//    }
 
     public  GroupReminderAdapter(Context context, List<Document> groupReminders){
         this.context = context;
@@ -45,7 +41,6 @@ public class GroupReminderAdapter extends RecyclerView.Adapter<GroupReminderAdap
     @Override
     public void onBindViewHolder(@NonNull GroupReminderViewHolder holder, int position) {
         Document groupReminder = groupReminders.get(position);
-//            holder.groupReminderTitle.setText(reminderTitles.get(position));
 
         holder.groupReminderTitle.setText(groupReminder.get("title").toString());
 
@@ -59,7 +54,14 @@ public class GroupReminderAdapter extends RecyclerView.Adapter<GroupReminderAdap
     @Override
     public int getItemCount() {
         return groupReminders.size();
-//        return reminderTitles.size();
+    }
+
+    public Document getGroupAt(int adapterPosition) {
+        return groupReminders.get(adapterPosition);
+    }
+
+    public interface OnReminderClickListener {
+        void onReminderClick(Document reminder);
     }
 
     public class GroupReminderViewHolder extends RecyclerView.ViewHolder{
@@ -72,7 +74,16 @@ public class GroupReminderAdapter extends RecyclerView.Adapter<GroupReminderAdap
 
             groupReminderTitle = itemView.findViewById(R.id.customListItemTitle);
             groupReminderLocation = itemView.findViewById(R.id.customListItemSubTitle);
-
+            itemView.setOnClickListener(view -> {
+                int position = getAdapterPosition();
+                if (listener != null && position != RecyclerView.NO_POSITION) {
+                    listener.onReminderClick(groupReminders.get(position));
+                }
+            });
         }
+    }
+
+    public void setOnItemClickListener(GroupReminderAdapter.OnReminderClickListener listener) {
+        this.listener = listener;
     }
 }

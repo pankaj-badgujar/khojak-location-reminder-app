@@ -90,7 +90,6 @@ public class CreateGroup extends AppCompatActivity {
     }
 
     private void authenticateUser(String userName) {
-
         Document document = new Document("username", userName);
         AtomicReference<Task<Document>> fetch = new AtomicReference<>();
         Util.stitchUserTask.addOnCompleteListener(task -> {

@@ -75,7 +75,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <service android:name="edu.neu.khojak.LocationReminder.TODOList.NotificationService" />
+        <service android:name="edu.neu.khojak.LocationReminder.Service.NotificationService" />
     </application>
 
 </manifest>

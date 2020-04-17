@@ -29,7 +29,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import edu.neu.khojak.LocationReminder.Adapters.ReminderAdapter;
 import edu.neu.khojak.LocationReminder.POJO.PersonalReminder;
 import edu.neu.khojak.LocationReminder.TODOList.LocationActivity;
-import edu.neu.khojak.LocationReminder.TODOList.NotificationService;
+import edu.neu.khojak.LocationReminder.Service.NotificationService;
 import edu.neu.khojak.LocationReminder.ViewModel.ReminderViewModel;
 import edu.neu.khojak.R;
 

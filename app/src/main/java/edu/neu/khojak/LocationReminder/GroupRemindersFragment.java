@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -28,20 +30,12 @@ import edu.neu.khojak.LocationReminder.Adapters.GroupAdapter;
 import edu.neu.khojak.R;
 
 public class GroupRemindersFragment extends Fragment {
-
-    /* List of Object with Document.
-     The Document object is as key value pair having following keys
-     _id: id of the group,
-     groupName: groupName,
-     groupMembers: ArrayList with all the group members of this group*/
-    private List<Document> data = new ArrayList<>();
     private View v;
     private TextView noGroupMsg;
     private EmptyRecyclerView groupRecyclerView;
-    private GroupAdapter groupAdapter;
+    public static GroupAdapter groupAdapter;
     private Button createGroupBtn;
     private final int LAUNCH_CREATE_GROUP_REQUEST_CODE = 1;
-
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -54,7 +48,7 @@ public class GroupRemindersFragment extends Fragment {
 
 
         //attach adapter to
-        groupAdapter = new GroupAdapter(getContext(), data);
+        groupAdapter = new GroupAdapter(getContext(), Util.groupData);
         groupRecyclerView.setAdapter(groupAdapter);
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
@@ -67,7 +61,7 @@ public class GroupRemindersFragment extends Fragment {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 Document group = groupAdapter.getGroupAt(viewHolder.getAdapterPosition());
-                data.remove(group);
+                Util.groupData.remove(group);
                 removeData(group);
                 groupAdapter.notifyDataSetChanged();
                 Toast.makeText(getContext(), "Group "+group.get("groupName").toString()+" deleted", Toast.LENGTH_SHORT)
@@ -75,27 +69,20 @@ public class GroupRemindersFragment extends Fragment {
             }
         }).attachToRecyclerView(groupRecyclerView);
 
-        groupAdapter.setOnItemClickListener(new GroupAdapter.OnGroupClickListener() {
-            @Override
-            public void onGroupClick(Document group) {
-                Intent intent = new Intent(getContext(), GroupDetails.class);
-                intent.putExtra("group",group);
-                startActivity(intent);
-            }
+        groupAdapter.setOnItemClickListener(group -> {
+            Intent intent = new Intent(getContext(), GroupDetails.class);
+            intent.putExtra("group",group);
+            startActivity(intent);
         });
 
         //setting up 'no group created' message when no groups present
-
         noGroupMsg = v.findViewById(R.id.noGroupsCreatedMsg);
         groupRecyclerView.setEmptyView(noGroupMsg);
-        fetchData(groupAdapter);
-
         createGroupBtn = v.findViewById(R.id.createGroupBtn);
         createGroupBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), CreateGroup.class);
             startActivityForResult(intent, LAUNCH_CREATE_GROUP_REQUEST_CODE);
         });
-
         return v;
     }
 
@@ -104,14 +91,14 @@ public class GroupRemindersFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == LAUNCH_CREATE_GROUP_REQUEST_CODE && resultCode == Activity.RESULT_OK){
-            fetchData(groupAdapter);
+            Util.fetchData();
         }
     }
 
     private void removeData(Document group) {
         Util.groupCollection.deleteOne(group).addOnCompleteListener(deleteTask -> {
             if(!deleteTask.isSuccessful()){
-                data.add(group);
+                Util.groupData.add(group);
                 groupAdapter.notifyDataSetChanged();
                 return;
             }
@@ -121,7 +108,7 @@ public class GroupRemindersFragment extends Fragment {
                             if(fetchTask.isSuccessful()){
                                 Document document = fetchTask.getResult();
                                 List<String> data = (List<String>) document.get("groupIds");
-                                data.remove(group.get("_id"));
+                                data.remove(group.get("_id").toString());
                                 document.remove("groupIds");
                                 document.append("groupIds",data);
                                 Util.userCollection
@@ -135,47 +122,6 @@ public class GroupRemindersFragment extends Fragment {
                         });
             });
         });
-    }
-
-    private void fetchData(GroupAdapter adapter) {
-        Util.userCollection.findOne(new Document("username",Util.userName)).addOnCompleteListener(task -> {
-            if(! task.isSuccessful()) {
-                return;
-            }
-            Document user = task.getResult();
-            Object object = user.get("groupIds");
-            if( object == null) {
-                return;
-            }
-            ((List<String>) object).forEach(groupId -> {
-                Util.groupCollection.findOne(new Document("_id",new ObjectId(groupId)))
-                        .addOnCompleteListener( fetchTask -> {
-
-                            if(fetchTask.isSuccessful() && fetchTask.getResult() != null ) {
-                                if (data.stream().anyMatch(document ->
-                                        document.get("_id").equals(fetchTask.getResult().get("_id")) )) {
-                                    return;
-                                }
-                                data.add(fetchTask.getResult());
-                            }
-                            adapter.notifyDataSetChanged();
-                        });
-            });
-        });
-    }
-
-
-
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
     }
 
 }
