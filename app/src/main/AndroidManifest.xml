@@ -67,7 +67,7 @@
 
         <activity
             android:name="edu.neu.khojak.LocationReminder.GroupDetails"
-            android:label="@string/title_activity_group_details"
+            android:label="@string/tab_text_2"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name="edu.neu.khojak.LocationReminder.CreateGroup" />
 

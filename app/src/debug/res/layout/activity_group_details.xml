@@ -38,6 +38,16 @@
         android:textSize="16sp"
         android:layout_gravity="center_vertical|center_horizontal" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Swipe reminders left or right to delete them"
+        android:textSize="14sp"
+        android:textStyle="italic"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginVertical="10dp"
+        android:layout_marginStart="10dp" />
+
     <edu.neu.khojak.LocationReminder.EmptyRecyclerView
         android:id="@+id/groupRemindersRecyclerView"
         android:layout_width="match_parent"
