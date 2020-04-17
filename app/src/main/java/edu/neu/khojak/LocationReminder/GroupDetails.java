@@ -3,10 +3,16 @@ package edu.neu.khojak.LocationReminder;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.mongodb.stitch.android.services.mongodb.remote.RemoteFindIterable;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -14,15 +20,16 @@ import org.bson.types.ObjectId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import edu.neu.khojak.LocationReminder.Adapters.GroupReminderAdapter;
+import edu.neu.khojak.LocationReminder.POJO.PersonalReminder;
+import edu.neu.khojak.LocationReminder.TODOList.ReminderLocationView;
 import edu.neu.khojak.R;
 
 public class GroupDetails extends AppCompatActivity {
 
-
-    private List<String> reminderIds;
     private List<Document> reminders = new ArrayList<>();
     private EmptyRecyclerView groupReminderRecyclerView;
     private GroupReminderAdapter groupReminderAdapter;
@@ -50,38 +57,68 @@ public class GroupDetails extends AppCompatActivity {
         groupReminderRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         groupReminderRecyclerView.setHasFixedSize(true);
 
-
-        /** Code to populate reminders by fetching data from database **/
-
-
-        reminderIds = document.get("reminders") == null ? new ArrayList<>() :
-                (List<String>) document.get("reminders");
-
-        reminderIds.forEach(id -> {
-            Util.reminderCollection.findOne(new Document("_id",new ObjectId(id))).addOnCompleteListener(fetchTask -> {
-                if(fetchTask.isSuccessful() && fetchTask.getResult() != null) {
-                    reminders.add(fetchTask.getResult());
-                }
-            });
-        });
-
-//        arrayAdapter  = new ArrayAdapter(this,android.R.layout.simple_list_item_1, reminders.stream().map(data ->
-//            ((String) data.get("title"))).collect(Collectors.toList()));
-//
-//        reminderList.setAdapter(arrayAdapter);
-//
-//        reminderList.setOnItemClickListener((adapterView, view, i, l) -> {
-//            Intent nextActivity = new Intent(this, ReminderLocationView.class);
-//            nextActivity.putExtra("reminder",new PersonalReminder(reminders.get(i)));
-//        });
-
-        List<String> reminderTitles =  reminders.stream().map(data ->
-            ((String) data.get("title"))).collect(Collectors.toList());
-
         groupReminderAdapter = new GroupReminderAdapter(this, reminders);
         groupReminderRecyclerView.setAdapter(groupReminderAdapter);
-        groupReminderAdapter.notifyDataSetChanged();
 
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
+                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                Document reminder = groupReminderAdapter.getGroupAt(viewHolder.getAdapterPosition());
+                reminders.remove(reminder);
+                Util.removeReminder(reminder);
+                groupReminderAdapter.notifyDataSetChanged();
+                Toast.makeText(getApplicationContext(), "Reminder deleted", Toast.LENGTH_SHORT)
+                        .show();
+            }
+        }).attachToRecyclerView(groupReminderRecyclerView);
+
+        groupReminderAdapter.setOnItemClickListener(data -> {
+            Intent locationActivity = new Intent(this, ReminderLocationView.class);
+            locationActivity.putExtra("reminder", new PersonalReminder(data));
+            startActivity(locationActivity);
+        });
+        Util.groupCollection.findOne(new Document("_id",document.get("_id"))).addOnCompleteListener(groupObjectFetch -> {
+           if(groupObjectFetch.isSuccessful() && groupObjectFetch.getResult() != null) {
+               Object object =
+                       groupObjectFetch.getResult().get("reminderIds");
+               if( object == null) {
+                   return;
+               }
+               fetchReminders((List<String>) object);
+           }
+        });
+    }
+
+    private void fetchReminders(List<String> reminderIds) {
+        List<ObjectId> objectReminderIds = reminderIds.stream().map(ObjectId::new).
+                collect(Collectors.toList());
+        Document ids = new Document("$in",objectReminderIds);
+        Document query = new Document("_id",ids);
+        RemoteFindIterable<Document> data = Util.reminderCollection.find(query);
+        AtomicBoolean isFetchCalledOnce = new AtomicBoolean(false);
+        data.into(new ArrayList<>()).addOnCompleteListener(task -> {
+            if(task.isSuccessful() && task.getResult() != null) {
+                List<Document> remoteReminders = task.getResult();
+                remoteReminders.forEach(remoteReminder -> {
+                    if(reminders.stream().anyMatch(reminder -> reminder.get("_id").
+                            equals(remoteReminder.get("_id")))) {
+                        return;
+                    }
+                    reminders.add(remoteReminder);
+                    if(!isFetchCalledOnce.get()){
+                        Util.fetchData();
+                        isFetchCalledOnce.set(true);
+                    }
+                    groupReminderAdapter.notifyDataSetChanged();
+                });
+            }
+        });
     }
 
 }

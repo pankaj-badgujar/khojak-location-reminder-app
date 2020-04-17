@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,6 +33,13 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.material.tabs.TabLayout;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import edu.neu.khojak.LocationReminder.Adapters.ReminderAdapter;
 import edu.neu.khojak.LocationReminder.Adapters.SectionsPagerAdapter;
@@ -82,6 +90,26 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
 
+        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if(tab.getText().toString().equals("Group Reminders")) {
+                    Util.fetchData();
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                if(tab.getText().toString().equals("Group Reminders")) {
+                    Util.fetchData();
+                }
+            }
+        });
         //initializing adapter
         final ReminderAdapter adapter = new ReminderAdapter();
 
@@ -149,9 +177,10 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
 
 
 
+        String[] groupNames = Util.groupData.stream()
+                .map(document -> document.get("groupName").toString()).toArray(String[]::new);
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
-                //TODO: instead of getResources().getStringArray(R.array.Groups) pass actual groups
-                android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.Groups) );
+                android.R.layout.simple_list_item_1, groupNames );
 
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerAdapter);
@@ -161,22 +190,41 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
         alertDialogBuilder.setView(dialogView);
         alertDialogBuilder.setTitle("Create new group reminder")
         .setNegativeButton("Cancel" , null)
-        .setPositiveButton("Create", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Document newGroupReminder = new Document();
+        .setPositiveButton("Create", (dialog, which) -> {
+            Document newGroupReminder = new Document();
+            String groupId =  Util.groupData.get(spinner.getSelectedItemPosition()).get("_id")
+                    .toString();
+            newGroupReminder.put("title", groupReminderTitle.getText().toString());
+            newGroupReminder.put("longitude",String.valueOf(groupReminderLocation.getLongitude()));
+            newGroupReminder.put("latitude",String.valueOf(groupReminderLocation.getLatitude()));
+            newGroupReminder.put("groupName",spinner.getSelectedItem().toString());
+            newGroupReminder.put("groupId", groupId);
 
-                newGroupReminder.put("title", groupReminderTitle.getText());
-                newGroupReminder.put("longitude",String.valueOf(groupReminderLocation.getLongitude()));
-                newGroupReminder.put("latitude",String.valueOf(groupReminderLocation.getLatitude()));
-
-                //TODO: we get group name here, but have to do additional work to get groupId
-                newGroupReminder.put("groupName",spinner.getSelectedItem().toString());
-
-                //TODO write code to add group reminder to database using this
-                // newGroupReminder doc created at last
-
-            }
+            Util.reminderCollection.insertOne(newGroupReminder).addOnCompleteListener(reminderInsertedTask -> {
+                if(!reminderInsertedTask.isSuccessful() && reminderInsertedTask.getResult() == null) {
+                    return;
+                }
+                String reminderId = Util
+                        .getId(reminderInsertedTask.getResult().getInsertedId());
+                Document group = new Document("_id",new ObjectId(groupId));
+                Util.groupCollection.findOne(group).addOnCompleteListener(reminderGroup -> {
+                    if(!reminderGroup.isSuccessful() && reminderGroup.getResult() ==null ){
+                        return;
+                    }
+                    Document groupDocument = reminderGroup.getResult();
+                    List<String> groupReminderIds = groupDocument.get("reminderIds") != null ?
+                            (List<String>) groupDocument.get("reminderIds") : new ArrayList<>();
+                    groupReminderIds.add(reminderId);
+                    groupDocument.remove("reminderIds");
+                    groupDocument.put("reminderIds",groupReminderIds);
+                    Util.groupCollection.updateOne(group,groupDocument).addOnCompleteListener(updateData -> {
+                        if(updateData.isSuccessful()) {
+                            Toast.makeText(getApplicationContext(),
+                                    "Reminder Added Successfully",Toast.LENGTH_LONG).show();
+                        }
+                    });
+                });
+            });
         });
 
         groupReminderInputDialog = alertDialogBuilder.create();
@@ -219,21 +267,19 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(data == null) {
+            return;
+        }
         switch (requestCode) {
             case PERSONAL_REMINDER_REQUEST_CODE:
-                if(data != null) {
-                    this.personalReminderLocation = data.getParcelableExtra("personalReminderLocation");
-                    Toast.makeText(context, personalReminderLocation != null ? personalReminderLocation.toString() : "",
-                            Toast.LENGTH_LONG).show();
-                }
+                this.personalReminderLocation = data.getParcelableExtra("location");
+                Toast.makeText(context, personalReminderLocation != null ? personalReminderLocation.toString() : "",
+                        Toast.LENGTH_LONG).show();
                 break;
             case GROUP_REMINDER_REQUEST_CODE:
-                if(data != null) {
-                    this.groupReminderLocation = data.getParcelableExtra("groupReminderLocation");
-                    Toast.makeText(context, groupReminderLocation != null ? groupReminderLocation.toString() : "",
-                            Toast.LENGTH_LONG).show();
-
-                }
+                this.groupReminderLocation = data.getParcelableExtra("location");
+                Toast.makeText(context, groupReminderLocation != null ? groupReminderLocation.toString() : "",
+                        Toast.LENGTH_LONG).show();
                 break;
             default:
                 break;

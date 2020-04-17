@@ -1,4 +1,4 @@
-package edu.neu.khojak.LocationReminder.TODOList;
+package edu.neu.khojak.LocationReminder.Service;
 
 import android.Manifest;
 import android.app.Notification;
@@ -21,10 +21,23 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.mongodb.stitch.android.services.mongodb.remote.RemoteFindIterable;
+
+import org.bson.Document;
+import org.bson.types.ObjectId;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import edu.neu.khojak.LocationReminder.POJO.PersonalReminder;
+import edu.neu.khojak.LocationReminder.TODOList.DeleteTask;
+import edu.neu.khojak.LocationReminder.TODOList.FetchTaskForService;
+import edu.neu.khojak.LocationReminder.TODOList.ReminderLocationView;
+import edu.neu.khojak.LocationReminder.Util;
 import edu.neu.khojak.R;
 
 public class NotificationService extends Service {
@@ -67,7 +80,7 @@ public class NotificationService extends Service {
                 (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if(checkPermission()){
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                    0,
+                    60,
                     1, new LocationTracker());
         }
     }
@@ -123,6 +136,7 @@ public class NotificationService extends Service {
         public void onLocationChanged(Location location) {
             lastLocation = location;
             new FetchTaskForService(context, reminder).execute();
+            checkGroupReminders();
         }
 
         @Override
@@ -139,6 +153,87 @@ public class NotificationService extends Service {
         public void onProviderDisabled(String s) {
 
         }
+    }
+
+    private void checkGroupReminders() {
+        Util.userCollection.findOne(new Document("username", Util.userName)).addOnCompleteListener(userObjectFetch -> {
+            if( !userObjectFetch.isSuccessful() && userObjectFetch.getResult() == null) {
+                return;
+            }
+            Document user = userObjectFetch.getResult();
+            if(user.get("groupIds") == null) {
+                return;
+            }
+            List<String> _ids = (List<String>) user.get("groupIds");
+            List<ObjectId> objectIds = _ids.stream().map(ObjectId::new).collect(Collectors.toList());
+            Document intermediate = new Document("$in",objectIds);
+            Document query = new Document("_id",intermediate);
+            RemoteFindIterable<Document> documentRemoteFindIterable = Util.groupCollection.find(query);
+            documentRemoteFindIterable.into(new ArrayList<>()).addOnCompleteListener(groupFetch -> {
+               if(!groupFetch.isSuccessful() && groupFetch.getResult() == null) {
+                   return;
+               }
+               fetchReminders(groupFetch.getResult());
+            });
+        });
+    }
+
+    private void fetchReminders(ArrayList<Document> result) {
+        List<String> _ids = new ArrayList<>();
+        result.forEach(document -> {
+            _ids.addAll(document.get("reminderIds") == null ? new ArrayList<>() :
+                    (List<String>) document.get("reminderIds"));
+        });
+        List<ObjectId> objectIds = _ids.stream().map(ObjectId::new).collect(Collectors.toList());;
+        Document intermediate = new Document("$in",objectIds);
+        Document query = new Document("_id",intermediate);
+        RemoteFindIterable<Document> documentRemoteFindIterable = Util.reminderCollection.find(query);
+        documentRemoteFindIterable.into(new ArrayList<>()).addOnCompleteListener(reminderFetch -> {
+            if(!reminderFetch.isSuccessful() && reminderFetch.getResult() == null) {
+                return;
+            }
+            List<Document> data = reminderFetch.getResult();
+            checkLocationForGroup(data);
+        });
+    }
+
+    private void checkLocationForGroup(List<Document> data) {
+        data.forEach(remoteReminder -> {
+            double latitude = Double.parseDouble((String) remoteReminder.get("latitude"));
+            double longitude = Double.parseDouble((String) remoteReminder.get("longitude"));
+            Location location = new Location("");
+            location.setLatitude(latitude);
+            location.setLongitude(longitude);
+            if(shouldLocationCreateNotification(location)) {
+                createNotificationForGroup(remoteReminder);
+            }
+        });
+    }
+
+    private void createNotificationForGroup(Document remoteReminder) {
+        Intent intent = new Intent(context,ReminderLocationView.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra("reminder", new PersonalReminder(remoteReminder));
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent,
+                PendingIntent.FLAG_ONE_SHOT);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,
+                channelId)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(remoteReminder.get("groupName").toString())
+                .setContentText(remoteReminder.get("title").toString())
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        Notification notification = builder.build();
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        Util.removeReminder(remoteReminder);
+        // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(new Random().nextInt(), notification);
+
     }
 
     private static void checkLocation(List<PersonalReminder> personalReminders) {

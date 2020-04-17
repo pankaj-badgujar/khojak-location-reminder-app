@@ -22,6 +22,8 @@ public class PersonalReminder implements Parcelable {
 
     public PersonalReminder(Document document) {
         title = (String) document.get("title");
+        latitude = Double.parseDouble((String) document.get("latitude"));
+        longitude = Double.parseDouble((String) document.get("longitude"));
     }
 
     public double getLatitude() {

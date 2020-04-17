@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 
 import edu.neu.khojak.LocationReminder.Database.ReminderDatabase;
 import edu.neu.khojak.LocationReminder.POJO.PersonalReminder;
+import edu.neu.khojak.LocationReminder.Service.NotificationService;
 
 public class FetchTaskForService extends AsyncTask<Void, Void, List<PersonalReminder>> {
 
