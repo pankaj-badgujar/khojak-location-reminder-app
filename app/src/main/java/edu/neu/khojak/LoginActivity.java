@@ -138,9 +138,10 @@ public class LoginActivity extends AppCompatActivity {
         Document document = new Document("username", userName);
         document.put(PENDING_REQUESTS, new ArrayList<String>());
         document.put(FRIEND_LIST, new ArrayList<String>());
+
         AtomicReference<Task<Document>> fetch = new AtomicReference<>();
         Util.userCollection.findOne(document).addOnCompleteListener(fetchTask -> {
-            if (fetchTask.isSuccessful() || fetchTask.getResult() == null) {
+            if (fetchTask.isSuccessful() && fetchTask.getResult() == null) {
                 Util.userCollection.insertOne(document).addOnCompleteListener(insertTask -> {
                     if (insertTask.isSuccessful()) {
                         Util.userName = userName;
