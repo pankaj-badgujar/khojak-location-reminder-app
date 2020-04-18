@@ -60,7 +60,6 @@ public class PendingRequests extends AppCompatActivity {
                 switch (direction){
 
                     // left case
-                    //TODO: update position after the request above it is deleted (Array Index out of bound)
                     case 4:
                         Util.deletePendingRequest(pendingRequestsAdapter, requestToActUpon);
                         Toasty.error(PendingRequests.this,"Pending request deleted", Toasty.LENGTH_SHORT).show();

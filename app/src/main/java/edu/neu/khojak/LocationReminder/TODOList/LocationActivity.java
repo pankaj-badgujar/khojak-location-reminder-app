@@ -58,7 +58,6 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                // TODO: Get info about the selected place.
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.title(place.getName());
                 markerOptions.position(place.getLatLng());
@@ -74,7 +73,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
             @Override
             public void onError(Status status) {
-                // TODO: Handle the error.
+
                 Log.i(TAG, "An error occurred: " + status);
             }
         });
