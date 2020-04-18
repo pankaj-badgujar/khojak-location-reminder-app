@@ -82,7 +82,7 @@ public class TODOListPersonal extends AppCompatActivity {
 
 
     public void onSetLocationPressed(View view) {
-        Toast.makeText(this, "starting map activity", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "starting map activity", Toast.LENGTH_SHORT).show();
         startActivityForResult(new Intent(this, LocationActivity.class), REQUEST_CODE_1);
     }
 

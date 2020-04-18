@@ -1,10 +1,8 @@
 package edu.neu.khojak.LocationReminder;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,15 +17,13 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.bson.BsonValue;
 import org.bson.Document;
-import org.bson.types.ObjectId;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.neu.khojak.LocationReminder.Adapters.GroupAdapter;
 import edu.neu.khojak.R;
+import es.dmoral.toasty.Toasty;
 
 public class GroupRemindersFragment extends Fragment {
     private View v;
@@ -64,7 +60,7 @@ public class GroupRemindersFragment extends Fragment {
                 Util.groupData.remove(group);
                 removeData(group);
                 groupAdapter.notifyDataSetChanged();
-                Toast.makeText(getContext(), "Group "+group.get("groupName").toString()+" deleted", Toast.LENGTH_SHORT)
+                Toasty.error(getContext(), "Group " + group.get("groupName").toString() + " deleted", Toast.LENGTH_SHORT)
                         .show();
             }
         }).attachToRecyclerView(groupRecyclerView);
@@ -115,7 +111,7 @@ public class GroupRemindersFragment extends Fragment {
                                         .updateOne(new Document("username",user),document)
                                         .addOnCompleteListener(updateTask -> {
                                             if(updateTask.isSuccessful()){
-                                                Toast.makeText(getContext(),"User Updated",Toast.LENGTH_LONG);
+//                                                Toast.makeText(getContext(),"User Updated",Toast.LENGTH_LONG);
                                             }
                                         });
                             }

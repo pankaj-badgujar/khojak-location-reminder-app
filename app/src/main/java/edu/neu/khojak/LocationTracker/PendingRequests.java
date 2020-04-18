@@ -1,6 +1,7 @@
 package edu.neu.khojak.LocationTracker;
 
 import android.os.Bundle;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +23,7 @@ public class PendingRequests extends AppCompatActivity {
     private PendingRequestsAdapter pendingRequestsAdapter;
     private EmptyRecyclerView pendingRequestsRecyclerView;
     private List<String> pendingRequests;
+    private TextView noPendingRequestMsg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,9 @@ public class PendingRequests extends AppCompatActivity {
 
         pendingRequestsRecyclerView.setAdapter(pendingRequestsAdapter);
         pendingRequestsAdapter.notifyDataSetChanged();
+
+        noPendingRequestMsg = findViewById(R.id.noPendingRequestMsg);
+        pendingRequestsRecyclerView.setEmptyView(noPendingRequestMsg);
 
         new ItemTouchHelper(new ItemTouchHelper
                 .SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
