@@ -76,6 +76,7 @@
             android:value="@string/google_maps_key" />
 
         <service android:name="edu.neu.khojak.LocationReminder.Service.NotificationService" />
+        <service android:name="edu.neu.khojak.LocationReminder.Service.TrackingService" />
     </application>
 
 </manifest>
