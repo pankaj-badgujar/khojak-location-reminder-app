@@ -80,8 +80,8 @@ public class LocationTracker extends AppCompatActivity {
         if (friendSpinner.getSelectedItem() == null) {
             Toasty.error(this, "No friends to track", Toasty.LENGTH_SHORT).show();
         } else if (destinationLocation == null) {
-            Toast.makeText(this, "Location cannot be empty",
-                    Toast.LENGTH_LONG).show();
+            Toasty.error(this, getString(R.string.locationEmptyMsg),
+                    Toast.LENGTH_SHORT).show();
         } else {
             addTrackingDetails(friendSpinner.getSelectedItem().toString());
         }
@@ -194,7 +194,7 @@ public class LocationTracker extends AppCompatActivity {
                         Util.userCollection.updateOne(new Document("username", Util.userName), document)
                                 .addOnCompleteListener(updateTask -> {
                                     if (updateTask.isSuccessful()) {
-                                        //Do something
+                                        Toasty.success(this,"Tracking started...",Toasty.LENGTH_SHORT).show();
                                     }
                                 });
                     });

@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import edu.neu.khojak.R;
+import es.dmoral.toasty.Toasty;
 
 public class CreateGroup extends AppCompatActivity {
 
@@ -66,7 +67,7 @@ public class CreateGroup extends AppCompatActivity {
                              public void onClick(DialogInterface dialog, int which) {
                                  usernamesList.remove(usernameToBeRemoved);
                                  arrayAdapter.notifyDataSetChanged();
-                                 Toast.makeText(CreateGroup.this,usernameToBeRemoved +" deleted",
+                                 Toasty.error(CreateGroup.this,usernameToBeRemoved +" deleted",
                                          Toast.LENGTH_SHORT).show();
                              }
                          }).show();
@@ -82,7 +83,7 @@ public class CreateGroup extends AppCompatActivity {
         if(usernameToBeAdded.trim().isEmpty()){
             groupMemberName.setError(getString(R.string.empty_field_error));
         } else if (usernamesList.contains(usernameToBeAdded)) {
-            Toast.makeText(this, usernameToBeAdded +" already in the group",
+            Toasty.warning(this, usernameToBeAdded +" already in the group",
                     Toast.LENGTH_SHORT).show();
         } else{
             authenticateUser(usernameToBeAdded);
@@ -102,9 +103,9 @@ public class CreateGroup extends AppCompatActivity {
                     usernamesList.add(userName);
                     arrayAdapter.notifyDataSetChanged();
                     groupMemberName.setText("");
-                    Toast.makeText(this, userName +" added", Toast.LENGTH_SHORT).show();
+                    Toasty.success(this, userName +" added", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(this, userName +" does not exist",
+                    Toasty.error(this, userName +" does not exist",
                             Toast.LENGTH_SHORT).show();
                 }
             });
@@ -117,8 +118,8 @@ public class CreateGroup extends AppCompatActivity {
             groupName.setError(getString(R.string.empty_field_error));
         }
         else if(usernamesList.size()<2){
-            Toast.makeText(this, "Group should have minimum 2 members",
-                    Toast.LENGTH_LONG).show();
+            Toasty.info(this, "Group should have minimum 2 members",
+                    Toast.LENGTH_SHORT).show();
         } else {
             Map<String, Object> map = new HashMap<>();
             map.put("groupName",groupNameString);
@@ -135,7 +136,7 @@ public class CreateGroup extends AppCompatActivity {
                 Document document = new Document(data);
                 Util.groupCollection.insertOne(document).addOnCompleteListener( insertTask -> {
                             if (insertTask.isSuccessful()) {
-                                Toast.makeText(this,"Group created", Toast.LENGTH_LONG).show();
+                                Toasty.success(this,"Group created successfully", Toast.LENGTH_SHORT).show();
                                 List<String> users = (List<String>) data.get("groupMembers");
                                 users.forEach(user -> {
                                     Util.userCollection.findOne(new Document("username",user))
@@ -153,7 +154,7 @@ public class CreateGroup extends AppCompatActivity {
                                                     Util.userCollection.updateOne(new Document("username",user), updatedUser).addOnCompleteListener(updateTask -> {
                                                         Intent returnIntent = new Intent();
                                                         if(updateTask.isSuccessful()) {
-                                                            Toast.makeText(getApplicationContext(),"user updated",Toast.LENGTH_LONG).show();
+                                                            Util.fetchData();
                                                             setResult(Activity.RESULT_OK,returnIntent);
                                                         } else {
                                                             setResult(Activity.RESULT_CANCELED,returnIntent);

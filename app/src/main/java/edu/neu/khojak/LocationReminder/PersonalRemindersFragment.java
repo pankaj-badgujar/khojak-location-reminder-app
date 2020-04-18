@@ -23,6 +23,7 @@ import edu.neu.khojak.LocationReminder.POJO.PersonalReminder;
 import edu.neu.khojak.LocationReminder.TODOList.ReminderLocationView;
 import edu.neu.khojak.LocationReminder.ViewModel.ReminderViewModel;
 import edu.neu.khojak.R;
+import es.dmoral.toasty.Toasty;
 
 
 /**
@@ -111,7 +112,7 @@ public class PersonalRemindersFragment extends Fragment {
                 PersonalReminder reminder = adapter.getLinkAt(viewHolder.getAdapterPosition());
                 reminderViewModel.deleteReminder(reminder);
 
-                Toast.makeText(getContext(), "Reminder deleted", Toast.LENGTH_SHORT)
+                Toasty.error(getContext(), "Reminder deleted", Toast.LENGTH_SHORT)
                         .show();
             }
         }).attachToRecyclerView(recyclerView);
@@ -120,8 +121,6 @@ public class PersonalRemindersFragment extends Fragment {
             Intent intent = new Intent(getContext(), ReminderLocationView.class);
             intent.putExtra("reminder",reminder);
             startActivity(intent);
-            Toast.makeText(getContext(), "Reminder opened", Toast.LENGTH_SHORT)
-                    .show();
         });
 
         return v;

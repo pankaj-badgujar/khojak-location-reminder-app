@@ -31,11 +31,32 @@
         android:layout_marginVertical="15dp"
         android:layout_marginLeft="10dp" />
 
-    <edu.neu.khojak.LocationReminder.EmptyRecyclerView
-        android:id="@+id/pendingRequestsRecyclerView"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="10dp"
-        />
+        android:layout_margin="10dp">
+
+        <edu.neu.khojak.LocationReminder.EmptyRecyclerView
+            android:id="@+id/pendingRequestsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+
+        <TextView
+            android:id="@+id/noPendingRequestMsg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/no_pending_requests"
+            android:textSize="20sp"
+            android:visibility="invisible"/>
+
+
+
+    </RelativeLayout>
+
+
 
 </LinearLayout>

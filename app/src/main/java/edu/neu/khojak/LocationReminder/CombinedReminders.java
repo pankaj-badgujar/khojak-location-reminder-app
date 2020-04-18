@@ -43,6 +43,7 @@ import edu.neu.khojak.LocationReminder.POJO.PersonalReminder;
 import edu.neu.khojak.LocationReminder.TODOList.LocationActivity;
 import edu.neu.khojak.LocationReminder.ViewModel.ReminderViewModel;
 import edu.neu.khojak.R;
+import es.dmoral.toasty.Toasty;
 
 public class CombinedReminders extends AppCompatActivity implements PersonalRemindersFragment.OnFragmentInteractionListener{
 
@@ -66,7 +67,7 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
     private Spinner spinner;
     private Button setPersonalLocationBtn;
     private Button setGroupLocationBtn;
-    private String[] groupNames;
+    FloatingActionsMenu fabMenu;
 
 
 
@@ -113,7 +114,7 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
         reminderViewModel = ViewModelProviders.of(this).get(ReminderViewModel.class);
         reminderViewModel.getAllReminders().observe(this, reminders -> adapter.setReminders(reminders));
 
-        FloatingActionsMenu fabMenu = findViewById(R.id.fabMenu);
+        fabMenu = findViewById(R.id.fabMenu);
 
         FloatingActionButton addPersonalReminderBtn = findViewById(R.id.addPersonalReminderBtn);
         addPersonalReminderBtn.setOnClickListener(view -> {
@@ -202,7 +203,7 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
                     groupReminderTitle.setError(getString(R.string.empty_field_error));
                 }
                 else if(groupReminderLocation == null){
-                    Toast.makeText(CombinedReminders.this, getString(R.string.locationEmptyMsg), Toast.LENGTH_SHORT).show();
+                    Toasty.error(CombinedReminders.this, getString(R.string.locationEmptyMsg), Toast.LENGTH_SHORT).show();
                 }
                 else {
                     createGroupReminder();
@@ -245,8 +246,8 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
                 groupDocument.put("reminderIds",groupReminderIds);
                 Util.groupCollection.updateOne(group,groupDocument).addOnCompleteListener(updateData -> {
                     if(updateData.isSuccessful()) {
-                        Toast.makeText(getApplicationContext(),
-                                "Reminder Added Successfully",Toast.LENGTH_LONG).show();
+                        Toasty.success(getApplicationContext(),
+                                "Reminder Added Successfully",Toast.LENGTH_SHORT).show();
                     }
                 });
             });
@@ -262,7 +263,6 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
     }
 
     public void onSetLocationPressed(View view, int requestCode) {
-        Toast.makeText(context, "starting map activity", Toast.LENGTH_SHORT).show();
         startActivityForResult(new Intent(context, LocationActivity.class), requestCode);
     }
 
@@ -275,13 +275,15 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
         if (reminder.isEmpty()) {
             personalReminderTitle.setError(getString(R.string.empty_field_error));
         } else if (personalReminderLocation == null) {
-            Toast.makeText(context, R.string.locationEmptyMsg,
-                    Toast.LENGTH_LONG).show();
+            Toasty.error(context, R.string.locationEmptyMsg,
+                    Toast.LENGTH_SHORT).show();
         } else {
             PersonalReminder personalReminder = new PersonalReminder(reminder, personalReminderLocation);
             reminderViewModel.addReminder(personalReminder);
             this.personalReminderLocation = null;
             personalReminderInputDialog.dismiss();
+            Toasty.success(getApplicationContext(),
+                    "Reminder Added Successfully",Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -294,13 +296,13 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
         switch (requestCode) {
             case PERSONAL_REMINDER_REQUEST_CODE:
                 this.personalReminderLocation = data.getParcelableExtra("location");
-                Toast.makeText(context, personalReminderLocation != null ? personalReminderLocation.toString() : "",
-                        Toast.LENGTH_LONG).show();
+                Toasty.warning(context, personalReminderLocation != null ? "Location marked" : "",
+                        Toast.LENGTH_SHORT).show();
                 break;
             case GROUP_REMINDER_REQUEST_CODE:
                 this.groupReminderLocation = data.getParcelableExtra("location");
-                Toast.makeText(context, groupReminderLocation != null ? groupReminderLocation.toString() : "",
-                        Toast.LENGTH_LONG).show();
+                Toasty.warning(context, groupReminderLocation != null ? "Location marked" : "",
+                        Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;
@@ -348,7 +350,7 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
                 .setCancelable(true)
                 .setPositiveButton("Apply", ((dialog, id) ->{
                     reminderRadius = radiusSeekBar.getProgress();
-                    Toast.makeText(this,"Radius set to "+reminderRadius,Toast.LENGTH_SHORT).show();
+                    Toasty.info(this,"Radius set to "+reminderRadius,Toast.LENGTH_SHORT).show();
                 }
                 ))
                 .setNegativeButton("Cancel", ((dialog, id) -> dialog.cancel() ));
@@ -378,5 +380,4 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
     public void onFragmentInteraction(Uri uri) {
 
     }
-
 }

@@ -32,6 +32,7 @@ import edu.neu.khojak.LocationReminder.TODOList.LocationActivity;
 import edu.neu.khojak.LocationReminder.Service.NotificationService;
 import edu.neu.khojak.LocationReminder.ViewModel.ReminderViewModel;
 import edu.neu.khojak.R;
+import es.dmoral.toasty.Toasty;
 
 public class LocationReminderUpdated extends AppCompatActivity {
 
@@ -76,7 +77,7 @@ public class LocationReminderUpdated extends AppCompatActivity {
                 PersonalReminder reminder = adapter.getLinkAt(viewHolder.getAdapterPosition());
                 reminderViewModel.deleteReminder(reminder);
 
-                Toast.makeText(LocationReminderUpdated.this, "Reminder deleted", Toast.LENGTH_SHORT)
+                Toasty.error(LocationReminderUpdated.this, "Reminder deleted", Toast.LENGTH_SHORT)
                         .show();
             }
         }).attachToRecyclerView(recyclerView);
@@ -84,8 +85,8 @@ public class LocationReminderUpdated extends AppCompatActivity {
         adapter.setOnItemClickListener(new ReminderAdapter.OnLinkItemClickListener() {
             @Override
             public void onLinkItemClick(PersonalReminder reminder) {
-                Toast.makeText(LocationReminderUpdated.this, "Reminder opened", Toast.LENGTH_SHORT)
-                        .show();
+//                Toast.makeText(LocationReminderUpdated.this, "Reminder opened", Toast.LENGTH_SHORT)
+//                        .show();
             }
         });
 

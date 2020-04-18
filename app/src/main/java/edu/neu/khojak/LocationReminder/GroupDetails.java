@@ -27,6 +27,7 @@ import edu.neu.khojak.LocationReminder.Adapters.GroupReminderAdapter;
 import edu.neu.khojak.LocationReminder.POJO.PersonalReminder;
 import edu.neu.khojak.LocationReminder.TODOList.ReminderLocationView;
 import edu.neu.khojak.R;
+import es.dmoral.toasty.Toasty;
 
 public class GroupDetails extends AppCompatActivity {
 
@@ -73,7 +74,7 @@ public class GroupDetails extends AppCompatActivity {
                 reminders.remove(reminder);
                 Util.removeReminder(reminder);
                 groupReminderAdapter.notifyDataSetChanged();
-                Toast.makeText(getApplicationContext(), "Reminder deleted", Toast.LENGTH_SHORT)
+                Toasty.error(getApplicationContext(), "Reminder deleted", Toast.LENGTH_SHORT)
                         .show();
             }
         }).attachToRecyclerView(groupReminderRecyclerView);

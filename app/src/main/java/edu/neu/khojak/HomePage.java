@@ -9,7 +9,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -112,7 +111,6 @@ public class HomePage extends AppCompatActivity {
                 stopService(appIntent);
                 startActivity(new Intent(this,LoginActivity.class));
                 (new DeleteUserTask()).execute(HomePage.this);
-                Toast.makeText(this,"Logout pressed", Toast.LENGTH_SHORT).show();
                 return true;
             default:return super.onOptionsItemSelected(item);
         }

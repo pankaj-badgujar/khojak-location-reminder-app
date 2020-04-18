@@ -23,6 +23,7 @@
     <string name="tab_text_2">Group Reminders</string>
 
     <string name="no_reminders_set">No reminders set</string>
+    <string name="no_pending_requests">No pending requests at this point</string>
     <string name="what_is_your_group_s_name">What is your group\'s name ?</string>
     <string name="enter_group_member_s_username">Enter group member\'s username</string>
     <string name="create_group">Create Group</string>
