@@ -36,6 +36,7 @@ public class GroupDetails extends AppCompatActivity {
     private GroupReminderAdapter groupReminderAdapter;
     private TextView groupNameTitle;
     private TextView groupMemberCount;
+    private TextView noReminderTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,8 @@ public class GroupDetails extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Intent intent = getIntent();
+
+                Intent intent = getIntent();
         Map document = (Map) intent.getSerializableExtra("group");
 
         groupNameTitle = findViewById(R.id.groupTitleInDetails);
@@ -60,6 +62,11 @@ public class GroupDetails extends AppCompatActivity {
 
         groupReminderAdapter = new GroupReminderAdapter(this, reminders);
         groupReminderRecyclerView.setAdapter(groupReminderAdapter);
+
+
+
+        noReminderTextView = findViewById(R.id.noReminderSetMsgForGroup);
+        groupReminderRecyclerView.setEmptyView(noReminderTextView);
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
