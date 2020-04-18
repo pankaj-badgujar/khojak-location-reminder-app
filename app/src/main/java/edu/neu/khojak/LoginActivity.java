@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.Task;
 
 import org.bson.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -132,13 +133,15 @@ public class LoginActivity extends AppCompatActivity {
 
     private void addUser(String userName) {
         Document document = new Document("username", userName);
+        document.put("pendingRequests", new ArrayList<String>());
+        document.put("trackableFriends", new ArrayList<String>());
         AtomicReference<Task<Document>> fetch = new AtomicReference<>();
         Util.userCollection.findOne(document).addOnCompleteListener(fetchTask -> {
             if (fetchTask.isSuccessful() || fetchTask.getResult() == null) {
                 Util.userCollection.insertOne(document).addOnCompleteListener(insertTask -> {
                     if (insertTask.isSuccessful()) {
                         Util.userName = userName;
-                        (new InsertUser()).execute();
+                        (new InsertUser()).execute(this);
                         login();
                     }
                 });

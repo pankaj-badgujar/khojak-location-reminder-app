@@ -3,12 +3,12 @@ package edu.neu.khojak;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -16,19 +16,17 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import java.util.List;
-
 import edu.neu.khojak.LocationReminder.CombinedReminders;
 import edu.neu.khojak.LocationReminder.DAO.UserDAO;
 import edu.neu.khojak.LocationReminder.Database.UserDatabase;
-import edu.neu.khojak.LocationReminder.POJO.User;
 import edu.neu.khojak.LocationReminder.Service.NotificationService;
 import edu.neu.khojak.LocationReminder.Service.TrackingService;
-import edu.neu.khojak.LocationReminder.TODOList.DeleteTask;
 import edu.neu.khojak.LocationReminder.Util;
 import edu.neu.khojak.LocationTracker.LocationTracker;
 
 public class HomePage extends AppCompatActivity {
+
+    private TextView hiMsg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +36,14 @@ public class HomePage extends AppCompatActivity {
         setSupportActionBar(toolbar);
         Util.fetchData();
 
+        hiMsg = findViewById(R.id.hiMsg);
+        hiMsg.setText("Welcome, "+Util.userName);
+
         Intent intent = new Intent(this, NotificationService.class);
         intent.putExtra("username",Util.userName);
         Intent appIntent = new Intent(this, TrackingService.class);
         appIntent.putExtra("username",Util.userName);
+
         startService(intent);
         startService(appIntent);
     }
