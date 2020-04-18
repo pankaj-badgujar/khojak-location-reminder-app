@@ -73,21 +73,14 @@ public class Util {
                 return;
             }
 
-
-
             List<ObjectId> groupIds = ((List<String>) object).stream().map(ObjectId::new).collect(Collectors.toList());
             Document document = new Document("$in", groupIds);
             Document query = new Document("_id", document);
             RemoteFindIterable<Document> groupObject = groupCollection.find(query);
             groupObject.into(new ArrayList<>()).addOnCompleteListener(groupObjectList -> {
                 if (groupObjectList.isSuccessful() && groupObjectList.getResult() != null) {
-                    groupObjectList.getResult().stream().forEach(data -> {
-                        if (groupData.stream().anyMatch(groupTest ->
-                                data.get("_id").equals(groupTest.get("_id")))) {
-                            return;
-                        }
-                        groupData.add(data);
-                    });
+                    groupData.clear();
+                    groupData.addAll(groupObjectList.getResult());
                     if (GroupRemindersFragment.groupAdapter != null) {
                         GroupRemindersFragment.groupAdapter.notifyDataSetChanged();
                     }
