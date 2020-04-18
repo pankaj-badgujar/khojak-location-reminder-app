@@ -47,6 +47,9 @@ public class Util {
     public final static RemoteMongoCollection<Document> reminderCollection =
             mongoClient.getDatabase("khojak").getCollection("Reminder");
 
+    public final static RemoteMongoCollection<Document> trackingCollection =
+            mongoClient.getDatabase("khojak").getCollection("Tracking");
+
     public static String getId(BsonValue insertedId) {
         String[] intermediate = insertedId.toString().split("=");
         return intermediate[1].substring(0, intermediate[1].length() - 1);
@@ -54,10 +57,10 @@ public class Util {
 
     public static void fetchData() {
         userCollection.findOne(new Document("username", userName)).addOnCompleteListener(task -> {
-            if (!task.isSuccessful() && task.getResult() == null) {
+            Document user = task.getResult();
+            if (!task.isSuccessful() || user == null) {
                 return;
             }
-            Document user = task.getResult();
             Object object = user.get("groupIds");
             if (object == null) {
                 return;

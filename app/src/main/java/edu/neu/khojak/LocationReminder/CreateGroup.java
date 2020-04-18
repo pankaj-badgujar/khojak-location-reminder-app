@@ -96,6 +96,9 @@ public class CreateGroup extends AppCompatActivity {
             fetch.set(Util.userCollection.findOne(document));
             fetch.get().addOnCompleteListener(fetchTask -> {
                 if (fetchTask.isSuccessful() && fetchTask.getResult() != null) {
+                    if(usernamesList.contains(userName)) {
+                        return;
+                    }
                     usernamesList.add(userName);
                     arrayAdapter.notifyDataSetChanged();
                     groupMemberName.setText("");
@@ -121,6 +124,7 @@ public class CreateGroup extends AppCompatActivity {
             map.put("groupName",groupNameString);
             map.put("groupMembers",usernamesList);
             addGroup(map);
+            finish();
         }
 
     }
@@ -151,10 +155,9 @@ public class CreateGroup extends AppCompatActivity {
                                                         if(updateTask.isSuccessful()) {
                                                             Toast.makeText(getApplicationContext(),"user updated",Toast.LENGTH_LONG).show();
                                                             setResult(Activity.RESULT_OK,returnIntent);
-                                                        } else{
+                                                        } else {
                                                             setResult(Activity.RESULT_CANCELED,returnIntent);
                                                         }
-                                                        finish();
                                                     });
                                                 }
                                             });

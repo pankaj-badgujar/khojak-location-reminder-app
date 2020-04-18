@@ -1,26 +1,18 @@
 package edu.neu.khojak.LocationReminder.POJO;
 
-import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import edu.neu.khojak.LocationReminder.POJO.Group;
-
+@Entity(tableName = "User")
 public class User {
 
-    private String id;
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+    @ColumnInfo(name = "username")
     private String username;
-    private double latitude;
-    private double longitude;
-    private List<Long> groupNames = new ArrayList<>();
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    public User() {
     }
 
     public String getUsername() {
@@ -31,35 +23,11 @@ public class User {
         this.username = username;
     }
 
-    public double getLatitude() {
-        return latitude;
+    public int getId() {
+        return id;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
-    public List<Long> getGroups() {
-        return groupNames;
-    }
-
-    public void setGroups(@NonNull List<Group> groups) {
-        groups.forEach(group -> this.groupNames.add(group.getId()));
-    }
-
-    public void setGroupsIds(@NonNull List<Long> groups) {
-        this.groupNames.addAll(groups);
-    }
-
-    public void setGroup(long group) {
-        this.groupNames.add(group);
+    public void setId(int id) {
+        this.id = id;
     }
 }

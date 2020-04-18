@@ -13,6 +13,8 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
+import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -29,15 +31,18 @@ import org.bson.types.ObjectId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import edu.neu.khojak.LocationReminder.DAO.UserDAO;
+import edu.neu.khojak.LocationReminder.Database.UserDatabase;
 import edu.neu.khojak.LocationReminder.POJO.PersonalReminder;
+import edu.neu.khojak.LocationReminder.POJO.User;
 import edu.neu.khojak.LocationReminder.TODOList.DeleteTask;
 import edu.neu.khojak.LocationReminder.TODOList.FetchTaskForService;
 import edu.neu.khojak.LocationReminder.TODOList.ReminderLocationView;
 import edu.neu.khojak.LocationReminder.Util;
+import edu.neu.khojak.LoginActivity;
 import edu.neu.khojak.R;
 
 public class NotificationService extends Service {
@@ -46,6 +51,7 @@ public class NotificationService extends Service {
     private static NotificationManager notificationManager;
     private static NotificationService context;
     private static Location lastLocation;
+    public String username;
     private final static String notificationTitle = "Notification from Kojak";
     public static int reminderRadius = 1;
 
@@ -58,6 +64,11 @@ public class NotificationService extends Service {
             createNotification(data);
         }
     };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
     @Override
     public void onCreate() {
@@ -79,7 +90,7 @@ public class NotificationService extends Service {
         LocationManager locationManager =
                 (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if(checkPermission()){
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                     60,
                     1, new LocationTracker());
         }
@@ -117,7 +128,26 @@ public class NotificationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        (new FetchTask()).execute(this);
         return START_STICKY;
+    }
+
+    private class FetchTask extends AsyncTask<NotificationService, Void, Void> {
+        @Override
+        protected Void doInBackground(NotificationService... loginActivities) {
+            UserDAO dao = UserDatabase.getInstance(loginActivities[0]).getUserDao();
+            List<User> user = dao.getAllUsers();
+            if(user.size() > 0) {
+                username = user.get(0).getUsername();
+            } else {
+                stopSelf();
+            }
+            return null;
+        }
+    }
+
+    public String getUsername() {
+        return this.username;
     }
 
     @Nullable
@@ -157,7 +187,7 @@ public class NotificationService extends Service {
 
     private void checkGroupReminders() {
         Util.userCollection.findOne(new Document("username", Util.userName)).addOnCompleteListener(userObjectFetch -> {
-            if( !userObjectFetch.isSuccessful() && userObjectFetch.getResult() == null) {
+            if( !userObjectFetch.isSuccessful() || userObjectFetch.getResult() == null) {
                 return;
             }
             Document user = userObjectFetch.getResult();
@@ -170,7 +200,7 @@ public class NotificationService extends Service {
             Document query = new Document("_id",intermediate);
             RemoteFindIterable<Document> documentRemoteFindIterable = Util.groupCollection.find(query);
             documentRemoteFindIterable.into(new ArrayList<>()).addOnCompleteListener(groupFetch -> {
-               if(!groupFetch.isSuccessful() && groupFetch.getResult() == null) {
+               if(!groupFetch.isSuccessful() || groupFetch.getResult() == null) {
                    return;
                }
                fetchReminders(groupFetch.getResult());
@@ -189,7 +219,7 @@ public class NotificationService extends Service {
         Document query = new Document("_id",intermediate);
         RemoteFindIterable<Document> documentRemoteFindIterable = Util.reminderCollection.find(query);
         documentRemoteFindIterable.into(new ArrayList<>()).addOnCompleteListener(reminderFetch -> {
-            if(!reminderFetch.isSuccessful() && reminderFetch.getResult() == null) {
+            if(!reminderFetch.isSuccessful() || reminderFetch.getResult() == null) {
                 return;
             }
             List<Document> data = reminderFetch.getResult();
@@ -233,7 +263,6 @@ public class NotificationService extends Service {
         Util.removeReminder(remoteReminder);
         // notificationId is a unique int for each notification that you must define
         notificationManager.notify(new Random().nextInt(), notification);
-
     }
 
     private static void checkLocation(List<PersonalReminder> personalReminders) {

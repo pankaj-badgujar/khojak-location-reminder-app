@@ -70,6 +70,16 @@ public class LocationTracker extends AppCompatActivity {
                     Toast.LENGTH_LONG).show();
         } else {
             // TODO: create tracker
+            userToBeTracked.setText("");
+            Document document = new Document();
+            document.append("username", userToTrack);
+            Util.userCollection.findOne(document).addOnCompleteListener(task -> {
+                if(!task.isSuccessful() || task.getResult() == null) {
+                    userToBeTracked.setError("Username is not correct");
+                    return;
+                }
+                addTrackingDetails(userToTrack);
+            });
         }
     }
 
@@ -116,6 +126,34 @@ public class LocationTracker extends AppCompatActivity {
             }
         });
 
+    private void addTrackingDetails(String userToTrack) {
+        Document trackingObject = new Document();
+        trackingObject.append("user",userToTrack);
+        trackingObject.put("latitude",destinationLocation.getLatitude());
+        trackingObject.put("longitude",destinationLocation.getLongitude());
+        Util.trackingCollection.insertOne(trackingObject).addOnCompleteListener(insertTask -> {
+            if(!insertTask.isSuccessful()) {
+                return;
+            }
+            Util.userCollection.findOne(new Document("username",Util.userName))
+                    .addOnCompleteListener(fetchTask -> {
+                        if(!fetchTask.isSuccessful() || fetchTask.getResult() == null){
+                            return;
+                        }
+                        Document document = fetchTask.getResult();
+                        List<String> _ids = document.get("trackingIds") == null ? new ArrayList<>() :
+                                (List<String>) document.get("trackingIds");
+                        _ids.add(Util.getId(insertTask.getResult().getInsertedId()));
+                        document.remove("trackingIds");
+                        document.append("trackingIds",_ids);
+                        Util.userCollection.updateOne(new Document("username",Util.userName),document)
+                                .addOnCompleteListener( updateTask -> {
+                            if(updateTask.isSuccessful()) {
+                                //Do something
+                            }
+                        });
+            });
+        });
     }
 
     private void checkIfUserExist(String userName) {
