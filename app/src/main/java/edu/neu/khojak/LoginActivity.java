@@ -34,11 +34,6 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        editText = findViewById(R.id.username);
-        progressDialog = new ProgressDialog(this);
-
         if (!checkPermission()) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(
                     this, Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -61,7 +56,13 @@ public class LoginActivity extends AppCompatActivity {
                     }).setNegativeButton("No", ((dialog, which) -> finish()))
                     .setIcon(android.R.drawable.ic_dialog_alert).create().show();
         }
+
         (new FetchTask()).execute(this);
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+        editText = findViewById(R.id.username);
+        progressDialog = new ProgressDialog(this);
     }
 
     private class FetchTask extends AsyncTask<LoginActivity, Void, Void> {
@@ -120,7 +121,7 @@ public class LoginActivity extends AppCompatActivity {
         Util.userCollection.findOne(document).addOnCompleteListener(fetchTask -> {
            if(fetchTask.isSuccessful() && fetchTask.getResult() != null) {
                Util.userName = userName;
-               (new InsertUser()).execute();
+               (new InsertUser()).execute(this);
                login();
            } else {
                editText.setError(getString(R.string.username_error));
