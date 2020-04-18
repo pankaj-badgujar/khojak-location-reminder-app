@@ -68,8 +68,11 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <service android:name="edu.neu.khojak.LocationReminder.Service.NotificationService" />
-        <service android:name="edu.neu.khojak.LocationReminder.Service.TrackingService" />
+        <service android:name="edu.neu.khojak.LocationReminder.Service.NotificationService"
+            android:launchMode="singleTop"
+            />
+        <service android:name="edu.neu.khojak.LocationReminder.Service.TrackingService"
+            android:launchMode="singleTop" />
     </application>
 
 </manifest>

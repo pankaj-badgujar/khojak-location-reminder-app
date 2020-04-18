@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -31,6 +32,9 @@ import java.util.Random;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import edu.neu.khojak.LocationReminder.DAO.UserDAO;
+import edu.neu.khojak.LocationReminder.Database.UserDatabase;
+import edu.neu.khojak.LocationReminder.POJO.User;
 import edu.neu.khojak.LocationReminder.Util;
 import edu.neu.khojak.R;
 
@@ -62,7 +66,7 @@ public class TrackingService extends Service {
 
     private void shouldCreateNotification(Document document) {
         Util.userCollection.findOne(new Document("username", document.get("user").toString())).addOnCompleteListener(fetchTask -> {
-            if (!fetchTask.isSuccessful() && fetchTask.getResult() == null) {
+            if (!fetchTask.isSuccessful() || fetchTask.getResult() == null) {
                 return;
             }
             Document fetchedUser = fetchTask.getResult();
@@ -115,14 +119,27 @@ public class TrackingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        (new FetchTask()).execute(this);
         return START_STICKY;
     }
 
+    private class FetchTask extends AsyncTask<TrackingService, Void, Void> {
+        @Override
+        protected Void doInBackground(TrackingService... loginActivities) {
+            UserDAO dao = UserDatabase.getInstance(loginActivities[0]).getUserDao();
+            List<User> user = dao.getAllUsers();
+            if(user.size() > 0) {
+                username = user.get(0).getUsername();
+            } else {
+                stopSelf();
+            }
+            return null;
+        }
+    }
     @Override
     public void onCreate() {
         super.onCreate();
         context = this;
-        username = Util.userName;
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         CharSequence channelName = "Reminder";
         int importance = NotificationManager.IMPORTANCE_HIGH;
@@ -172,7 +189,7 @@ public class TrackingService extends Service {
 
     private void checkReminder() {
         Util.userCollection.findOne(new Document("username", username)).addOnCompleteListener(fetchTask -> {
-            if (!fetchTask.isSuccessful() && fetchTask.getResult() == null) {
+            if (!fetchTask.isSuccessful() || fetchTask.getResult() == null) {
                 return;
             }
             List<String> _ids = fetchTask.getResult().get("trackingIds") == null ? new ArrayList<>() :
@@ -185,7 +202,7 @@ public class TrackingService extends Service {
             Document query = new Document("_id", intermediate);
             RemoteFindIterable<Document> documentRemoteFindIterable = Util.trackingCollection.find(query);
             documentRemoteFindIterable.into(new ArrayList<>()).addOnCompleteListener(task -> {
-                if (!task.isSuccessful() && task.getResult() == null) {
+                if (!task.isSuccessful() || task.getResult() == null) {
                     return;
                 }
                 List<Document> documents = task.getResult();
