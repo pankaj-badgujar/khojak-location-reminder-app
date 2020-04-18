@@ -91,40 +91,43 @@ public class LocationTracker extends AppCompatActivity {
             userToSendTrackRequest.setError(getString(R.string.empty_field_error));
 
         } else{
-
             checkIfUserExist(requestee);
         }
+
     }
 
     private void sendTrackingRequestToUser(String requestee) {
 
         Util.stitchUserTask.addOnCompleteListener(task -> {
-            if(task.isSuccessful()) {
+            if (task.isSuccessful()) {
 
-                Util.userCollection.findOne(new Document("username",requestee))
+                Util.userCollection.findOne(new Document("username", requestee))
                         .addOnCompleteListener(databaseUser -> {
-                            if(databaseUser.isSuccessful()) {
+                            if (databaseUser.isSuccessful()) {
                                 Document updatedUser = databaseUser.getResult();
                                 Object pendingRequests = updatedUser
                                         .get("pendingRequests");
-                                if(pendingRequests == null) {
+                                if (pendingRequests == null) {
                                     pendingRequests = new ArrayList<String>();
                                 }
                                 ((List<String>) pendingRequests).add(Util.userName);
-                                updatedUser.put("pendingRequests",pendingRequests);
+                                updatedUser.put("pendingRequests", pendingRequests);
 
-                                Util.userCollection.updateOne(new Document("username",requestee), updatedUser)
+                                Util.userCollection.updateOne(new Document("username", requestee), updatedUser)
                                         .addOnCompleteListener(updateTask -> {
-                                            if(updateTask.isSuccessful()) {
-                                                Toast.makeText(getApplicationContext(),"friend request sent",Toast.LENGTH_SHORT).show();
-                                            } else{
-                                                Toast.makeText(getApplicationContext(),"could not send friend request",Toast.LENGTH_SHORT).show();
+                                            if (updateTask.isSuccessful()) {
+                                                Toast.makeText(getApplicationContext(), "friend request sent", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(getApplicationContext(), "could not send friend request", Toast.LENGTH_SHORT).show();
                                             }
                                         });
                             }
                         });
             }
         });
+
+    }
+
 
     private void addTrackingDetails(String userToTrack) {
         Document trackingObject = new Document();
@@ -148,11 +151,11 @@ public class LocationTracker extends AppCompatActivity {
                         document.append("trackingIds",_ids);
                         Util.userCollection.updateOne(new Document("username",Util.userName),document)
                                 .addOnCompleteListener( updateTask -> {
-                            if(updateTask.isSuccessful()) {
-                                //Do something
-                            }
-                        });
-            });
+                                    if(updateTask.isSuccessful()) {
+                                        //Do something
+                                    }
+                                });
+                    });
         });
     }
 
@@ -179,21 +182,18 @@ public class LocationTracker extends AppCompatActivity {
 
         Util.userCollection.findOne(new Document("username", Util.userName))
                 .addOnCompleteListener(task -> {
-            if(task.isSuccessful() && task.getResult() != null){
-                Document userDocument = task.getResult();
-                pendingRequestsFetched.set(userDocument.get("pendingRequests") == null
-                        ? new ArrayList<>()
-                        : (ArrayList<String>)userDocument.get("pendingRequests"));
+                    if(task.isSuccessful() && task.getResult() != null){
+                        Document userDocument = task.getResult();
+                        pendingRequestsFetched.set(userDocument.get("pendingRequests") == null
+                                ? new ArrayList<>()
+                                : (ArrayList<String>)userDocument.get("pendingRequests"));
 
-                Intent intent = new Intent(this, PendingRequests.class);
-                intent.putStringArrayListExtra("pendingRequests",
-                        pendingRequestsFetched.get());
-                startActivity(intent);
-            }
-        });
+                        Intent intent = new Intent(this, PendingRequests.class);
+                        intent.putStringArrayListExtra("pendingRequests",
+                                pendingRequestsFetched.get());
+                        startActivity(intent);
+                    }
+                });
 
     }
-
-
-
 }

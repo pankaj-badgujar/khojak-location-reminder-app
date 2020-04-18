@@ -19,7 +19,6 @@ import com.google.android.gms.tasks.Task;
 
 import org.bson.Document;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -35,12 +34,6 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        editText = findViewById(R.id.username);
-
-        progressDialog = new ProgressDialog(LoginActivity.this);
-
         if (!checkPermission()) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(
                     this, Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -103,11 +96,11 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.show();
         progressDialog.setContentView(R.layout.progress_dialog);
         progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
         authenticateUser(editText.getText().toString());
     }
 
     private void login() {
-        progressDialog.dismiss();
         startActivity(new Intent(this, HomePage.class));
         finish();
     }
@@ -126,22 +119,19 @@ public class LoginActivity extends AppCompatActivity {
     private void authenticateUser(String userName) {
         Document document = new Document("username", userName);
         Util.userCollection.findOne(document).addOnCompleteListener(fetchTask -> {
-           if(fetchTask.isSuccessful() && fetchTask.getResult() != null) {
-               Util.userName = userName;
-               (new InsertUser()).execute(this);
-               login();
-           } else {
-               editText.setError(getString(R.string.username_error));
-               progressDialog.dismiss();
-           }
+            if(fetchTask.isSuccessful() && fetchTask.getResult() != null) {
+                Util.userName = userName;
+                (new InsertUser()).execute(this);
+                login();
+            } else {
+                editText.setError(getString(R.string.username_error));
+                progressDialog.dismiss();
+            }
         });
     }
 
     private void addUser(String userName) {
         Document document = new Document("username", userName);
-        document.put("pendingRequests", new ArrayList<String>());
-        document.put("trackableFriends", new ArrayList<String>());
-
         AtomicReference<Task<Document>> fetch = new AtomicReference<>();
         Util.userCollection.findOne(document).addOnCompleteListener(fetchTask -> {
             if (fetchTask.isSuccessful() || fetchTask.getResult() == null) {
@@ -195,6 +185,4 @@ public class LoginActivity extends AppCompatActivity {
                 break;
         }
     }
-
-
 }
