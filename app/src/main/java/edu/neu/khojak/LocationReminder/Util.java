@@ -80,8 +80,13 @@ public class Util {
             RemoteFindIterable<Document> groupObject = groupCollection.find(query);
             groupObject.into(new ArrayList<>()).addOnCompleteListener(groupObjectList -> {
                 if (groupObjectList.isSuccessful() && groupObjectList.getResult() != null) {
-                    groupData.clear();
-                    groupData.addAll(groupObjectList.getResult());
+                    groupObjectList.getResult().stream().forEach(data -> {
+                        if (groupData.stream().anyMatch(groupTest ->
+                                data.get("_id").equals(groupTest.get("_id")))) {
+                            return;
+                        }
+                        groupData.add(data);
+                    });
                     if (GroupRemindersFragment.groupAdapter != null) {
                         GroupRemindersFragment.groupAdapter.notifyDataSetChanged();
                     }
