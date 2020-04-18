@@ -36,6 +36,8 @@
     <string name="no_groups_created">No groups created</string>
     <string name="title_activity_group_details">Group Details</string>
     <string name="start_tracking">Start tracking</string>
+    <string name="locationEmptyMsg">Location cannot be empty</string>
+    <string name="noGroupsPresentMsg">No groups present. You need to create a group first!</string>
 
     <string-array name="Groups">
         <item>Home</item>

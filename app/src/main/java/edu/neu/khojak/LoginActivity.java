@@ -1,6 +1,7 @@
 package edu.neu.khojak;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -24,6 +25,7 @@ import edu.neu.khojak.LocationReminder.Util;
 public class LoginActivity extends AppCompatActivity {
 
     EditText editText;
+    private ProgressDialog progressDialog;
 
     public static volatile Boolean isLoggedIn = null;
 
@@ -32,6 +34,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         editText = findViewById(R.id.username);
+
+        progressDialog = new ProgressDialog(this);
 
         if (!checkPermission()) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(
@@ -58,16 +62,26 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void onSignUpPressed(View view) {
+        progressDialog.show();
+        progressDialog.setContentView(R.layout.progress_dialog);
+        progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
 
         if (!editText.getText().toString().equals("")) {
             addUser(editText.getText().toString());
         } else {
             editText.setError(getString(R.string.username_required));
+            progressDialog.dismiss();
         }
     }
 
     public void onLoginPressed(View view) {
+        progressDialog.show();
+        progressDialog.setContentView(R.layout.progress_dialog);
+        progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
         authenticateUser(editText.getText().toString());
+
     }
 
     private void login() {
@@ -83,6 +97,7 @@ public class LoginActivity extends AppCompatActivity {
                login();
            } else {
                editText.setError(getString(R.string.username_error));
+               progressDialog.dismiss();
            }
         });
     }
@@ -100,6 +115,7 @@ public class LoginActivity extends AppCompatActivity {
                 });
             } else {
                 editText.setError(getString(R.string.duplicate_user));
+                progressDialog.dismiss();
             }
         });
     }

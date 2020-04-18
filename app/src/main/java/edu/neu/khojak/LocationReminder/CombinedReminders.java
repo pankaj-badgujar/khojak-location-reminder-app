@@ -1,12 +1,10 @@
 package edu.neu.khojak.LocationReminder;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,16 +28,14 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import edu.neu.khojak.LocationReminder.Adapters.ReminderAdapter;
 import edu.neu.khojak.LocationReminder.Adapters.SectionsPagerAdapter;
@@ -141,7 +137,7 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
             alertDialogBuilder.setView(promptView);
 
             // setup a dialog window
-            alertDialogBuilder.setCancelable(true);
+            alertDialogBuilder.setCancelable(false);
 
             // create an alert dialog
             personalReminderInputDialog = alertDialogBuilder.create();
@@ -153,7 +149,11 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
 
         FloatingActionButton addGroupReminderBtn = findViewById(R.id.addGroupReminderBtn);
         addGroupReminderBtn.setOnClickListener(view -> {
-            openGroupReminderDialog();
+            if(Util.groupData.size() < 1){
+                Snackbar.make(view,getString(R.string.noGroupsPresentMsg), Snackbar.LENGTH_LONG).show();
+            } else{
+                openGroupReminderDialog();
+            }
             fabMenu.collapse();
         });
 
@@ -190,46 +190,67 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
         alertDialogBuilder.setView(dialogView);
         alertDialogBuilder.setTitle("Create new group reminder")
         .setNegativeButton("Cancel" , null)
-        .setPositiveButton("Create", (dialog, which) -> {
-            Document newGroupReminder = new Document();
-            String groupId =  Util.groupData.get(spinner.getSelectedItemPosition()).get("_id")
-                    .toString();
-            newGroupReminder.put("title", groupReminderTitle.getText().toString());
-            newGroupReminder.put("longitude",String.valueOf(groupReminderLocation.getLongitude()));
-            newGroupReminder.put("latitude",String.valueOf(groupReminderLocation.getLatitude()));
-            newGroupReminder.put("groupName",spinner.getSelectedItem().toString());
-            newGroupReminder.put("groupId", groupId);
-
-            Util.reminderCollection.insertOne(newGroupReminder).addOnCompleteListener(reminderInsertedTask -> {
-                if(!reminderInsertedTask.isSuccessful() && reminderInsertedTask.getResult() == null) {
-                    return;
-                }
-                String reminderId = Util
-                        .getId(reminderInsertedTask.getResult().getInsertedId());
-                Document group = new Document("_id",new ObjectId(groupId));
-                Util.groupCollection.findOne(group).addOnCompleteListener(reminderGroup -> {
-                    if(!reminderGroup.isSuccessful() && reminderGroup.getResult() ==null ){
-                        return;
-                    }
-                    Document groupDocument = reminderGroup.getResult();
-                    List<String> groupReminderIds = groupDocument.get("reminderIds") != null ?
-                            (List<String>) groupDocument.get("reminderIds") : new ArrayList<>();
-                    groupReminderIds.add(reminderId);
-                    groupDocument.remove("reminderIds");
-                    groupDocument.put("reminderIds",groupReminderIds);
-                    Util.groupCollection.updateOne(group,groupDocument).addOnCompleteListener(updateData -> {
-                        if(updateData.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(),
-                                    "Reminder Added Successfully",Toast.LENGTH_LONG).show();
-                        }
-                    });
-                });
-            });
-        });
+        .setPositiveButton("Create", null);
 
         groupReminderInputDialog = alertDialogBuilder.create();
         groupReminderInputDialog.show();
 
+        groupReminderInputDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(groupReminderTitle.getText().toString().trim().isEmpty()){
+                    groupReminderTitle.setError(getString(R.string.empty_field_error));
+                }
+                else if(groupReminderLocation == null){
+                    Toast.makeText(CombinedReminders.this, getString(R.string.locationEmptyMsg), Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    createGroupReminder();
+                    groupReminderInputDialog.dismiss();
+                }
+
+            }
+        });
+
+    }
+
+
+
+    public void createGroupReminder(){
+        Document newGroupReminder = new Document();
+        String groupId =  Util.groupData.get(spinner.getSelectedItemPosition()).get("_id")
+                .toString();
+        newGroupReminder.put("title", groupReminderTitle.getText().toString());
+        newGroupReminder.put("longitude",String.valueOf(groupReminderLocation.getLongitude()));
+        newGroupReminder.put("latitude",String.valueOf(groupReminderLocation.getLatitude()));
+        newGroupReminder.put("groupName",spinner.getSelectedItem().toString());
+        newGroupReminder.put("groupId", groupId);
+
+        Util.reminderCollection.insertOne(newGroupReminder).addOnCompleteListener(reminderInsertedTask -> {
+            if(!reminderInsertedTask.isSuccessful() && reminderInsertedTask.getResult() == null) {
+                return;
+            }
+            String reminderId = Util
+                    .getId(reminderInsertedTask.getResult().getInsertedId());
+            Document group = new Document("_id",new ObjectId(groupId));
+            Util.groupCollection.findOne(group).addOnCompleteListener(reminderGroup -> {
+                if(!reminderGroup.isSuccessful() && reminderGroup.getResult() ==null ){
+                    return;
+                }
+                Document groupDocument = reminderGroup.getResult();
+                List<String> groupReminderIds = groupDocument.get("reminderIds") != null ?
+                        (List<String>) groupDocument.get("reminderIds") : new ArrayList<>();
+                groupReminderIds.add(reminderId);
+                groupDocument.remove("reminderIds");
+                groupDocument.put("reminderIds",groupReminderIds);
+                Util.groupCollection.updateOne(group,groupDocument).addOnCompleteListener(updateData -> {
+                    if(updateData.isSuccessful()) {
+                        Toast.makeText(getApplicationContext(),
+                                "Reminder Added Successfully",Toast.LENGTH_LONG).show();
+                    }
+                });
+            });
+        });
     }
 
     public void clearText(View view) {
@@ -254,7 +275,7 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
         if (reminder.isEmpty()) {
             personalReminderTitle.setError(getString(R.string.empty_field_error));
         } else if (personalReminderLocation == null) {
-            Toast.makeText(context, " Location cannot be empty.",
+            Toast.makeText(context, R.string.locationEmptyMsg,
                     Toast.LENGTH_LONG).show();
         } else {
             PersonalReminder personalReminder = new PersonalReminder(reminder, personalReminderLocation);
