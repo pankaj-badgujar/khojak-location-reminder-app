@@ -28,6 +28,9 @@ import edu.neu.khojak.LocationReminder.Database.UserDatabase;
 import edu.neu.khojak.LocationReminder.POJO.User;
 import edu.neu.khojak.LocationReminder.Util;
 
+import static edu.neu.khojak.Constants.FRIEND_LIST;
+import static edu.neu.khojak.Constants.PENDING_REQUESTS;
+
 public class LoginActivity extends AppCompatActivity {
 
     EditText editText;
@@ -133,8 +136,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void addUser(String userName) {
         Document document = new Document("username", userName);
-        document.put("pendingRequests", new ArrayList<String>());
-        document.put("trackableFriends", new ArrayList<String>());
+        document.put(PENDING_REQUESTS, new ArrayList<String>());
+        document.put(FRIEND_LIST, new ArrayList<String>());
         AtomicReference<Task<Document>> fetch = new AtomicReference<>();
         Util.userCollection.findOne(document).addOnCompleteListener(fetchTask -> {
             if (fetchTask.isSuccessful() || fetchTask.getResult() == null) {

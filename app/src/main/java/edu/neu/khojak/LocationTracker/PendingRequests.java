@@ -1,7 +1,6 @@
 package edu.neu.khojak.LocationTracker;
 
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +15,7 @@ import edu.neu.khojak.LocationReminder.EmptyRecyclerView;
 import edu.neu.khojak.LocationReminder.Util;
 import edu.neu.khojak.LocationTracker.adapters.PendingRequestsAdapter;
 import edu.neu.khojak.R;
+import es.dmoral.toasty.Toasty;
 
 public class PendingRequests extends AppCompatActivity {
 
@@ -51,31 +51,27 @@ public class PendingRequests extends AppCompatActivity {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-
+                String requestToActUpon = pendingRequests.get(viewHolder.getAdapterPosition());
                 switch (direction){
+
                     // left case
+                    //TODO: update position after the request above it is deleted (Array Index out of bound)
                     case 4:
-                        Util.deletePendingRequest(PendingRequests.this, viewHolder.getAdapterPosition());
+                        Util.deletePendingRequest(pendingRequestsAdapter, requestToActUpon);
+                        Toasty.error(PendingRequests.this,"Pending request deleted", Toasty.LENGTH_SHORT).show();
                         break;
+
                     // right case
                     case 8:
-                        acceptPendingRequest();
-                        Toast.makeText(PendingRequests.this, "Pending request accepted", Toast.LENGTH_SHORT)
-                                .show();
+                        Util.acceptPendingRequest(pendingRequestsAdapter, requestToActUpon);
+                        Toasty.success(PendingRequests.this,"Accepted! "+requestToActUpon+" is now a friend", Toasty.LENGTH_SHORT).show();
                         break;
                     default:
                         break;
                 }
-
-
-
             }
         }).attachToRecyclerView(pendingRequestsRecyclerView);
 
     }
-
-    private void acceptPendingRequest() {
-    }
-
 
 }

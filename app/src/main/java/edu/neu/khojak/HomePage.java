@@ -35,6 +35,7 @@ public class HomePage extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Util.fetchData();
+        Util.fetchFriendList();
 
         hiMsg = findViewById(R.id.hiMsg);
         hiMsg.setText("Welcome, "+Util.userName);
