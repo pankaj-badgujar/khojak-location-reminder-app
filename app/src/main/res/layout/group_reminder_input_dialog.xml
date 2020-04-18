@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="5dp">
+
+        <Button
+            android:id="@+id/setGroupLocationBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left|center_vertical"
+            android:backgroundTint="@color/colorPrimary"
+            android:onClick="onSetLocationPressed"
+            android:text="@string/set_location_txt"
+            android:drawableLeft="@drawable/ic_add_location_black_24dp"
+            android:drawablePadding="20dp"
+            android:textColor="@color/white" />
+
+        <EditText
+            android:id="@+id/groupReminderTitleEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:ems="10"
+            android:hint="@string/reminder"
+            android:inputType="text" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select group for reminder: "
+            android:textSize="18sp"
+            android:layout_marginTop="10dp"/>
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+</LinearLayout>

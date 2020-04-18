@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <Button
+        android:id="@+id/createGroupBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/create_group"
+        android:background="@android:color/holo_blue_dark"
+        android:textColor="@color/white"
+        android:layout_marginHorizontal="10dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginVertical="10dp"
+        />
+
+    <TextView
+        android:id="@+id/groupHeading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/groups"
+        android:layout_margin="10dp"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/deleteTip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Swipe groups left or right to delete them"
+        android:textSize="14sp"
+        android:textStyle="italic"
+        android:layout_marginLeft="10dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="5dp">
+
+        <edu.neu.khojak.LocationReminder.EmptyRecyclerView
+            android:id="@+id/groupRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/noGroupsCreatedMsg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="200dp"
+            android:text="@string/no_groups_created"
+            android:textSize="24sp"
+            android:visibility="invisible"/>
+
+    </RelativeLayout>
+
+
+
+
+
+</LinearLayout>
