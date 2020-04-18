@@ -45,6 +45,7 @@
         <item>Work</item>
         <item>Custom</item>
     </string-array>
+    <string name="title_activity_pending_requests">Pending Requests</string>
 
 
 </resources>

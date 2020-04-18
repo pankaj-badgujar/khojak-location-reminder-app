@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.Task;
 
 import org.bson.Document;
 
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
 import edu.neu.khojak.LocationReminder.Util;
@@ -35,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         editText = findViewById(R.id.username);
 
-        progressDialog = new ProgressDialog(this);
+        progressDialog = new ProgressDialog(LoginActivity.this);
 
         if (!checkPermission()) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(
@@ -79,12 +80,12 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.show();
         progressDialog.setContentView(R.layout.progress_dialog);
         progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-
         authenticateUser(editText.getText().toString());
 
     }
 
     private void login() {
+        progressDialog.dismiss();
         startActivity(new Intent(this, HomePage.class));
         finish();
     }
@@ -104,6 +105,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private void addUser(String userName) {
         Document document = new Document("username", userName);
+        document.put("pendingRequests", new ArrayList<String>());
+        document.put("trackableFriends", new ArrayList<String>());
+
         AtomicReference<Task<Document>> fetch = new AtomicReference<>();
         Util.userCollection.findOne(document).addOnCompleteListener(fetchTask -> {
             if (fetchTask.isSuccessful() && fetchTask.getResult() == null) {

@@ -11,7 +11,16 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.gms.tasks.Task;
+
+import org.bson.Document;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
 import edu.neu.khojak.LocationReminder.TODOList.LocationActivity;
+import edu.neu.khojak.LocationReminder.Util;
 import edu.neu.khojak.R;
 
 public class LocationTracker extends AppCompatActivity {
@@ -19,6 +28,7 @@ public class LocationTracker extends AppCompatActivity {
     private final int LOCATION_TRACKER_DESTINATION_REQUEST_CODE = 1;
     private Location destinationLocation;
     private EditText userToBeTracked;
+    private EditText userToSendTrackRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +38,7 @@ public class LocationTracker extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         userToBeTracked = findViewById(R.id.userToBeTracked);
+        userToSendTrackRequest = findViewById(R.id.userToSendTrackRequest);
     }
 
     public void setDestinationLocation(View view){
@@ -60,6 +71,91 @@ public class LocationTracker extends AppCompatActivity {
         } else {
             // TODO: create tracker
         }
+    }
+
+    public void sendTrackingRequestPressed(View view){
+
+        String requestee = userToSendTrackRequest.getText().toString();
+        if(requestee.trim().isEmpty()){
+
+            userToSendTrackRequest.setError(getString(R.string.empty_field_error));
+
+        } else{
+
+            checkIfUserExist(requestee);
+        }
+    }
+
+    private void sendTrackingRequestToUser(String requestee) {
+
+        Util.stitchUserTask.addOnCompleteListener(task -> {
+            if(task.isSuccessful()) {
+
+                Util.userCollection.findOne(new Document("username",requestee))
+                        .addOnCompleteListener(databaseUser -> {
+                            if(databaseUser.isSuccessful()) {
+                                Document updatedUser = databaseUser.getResult();
+                                Object pendingRequests = updatedUser
+                                        .get("pendingRequests");
+                                if(pendingRequests == null) {
+                                    pendingRequests = new ArrayList<String>();
+                                }
+                                ((List<String>) pendingRequests).add(Util.userName);
+                                updatedUser.put("pendingRequests",pendingRequests);
+
+                                Util.userCollection.updateOne(new Document("username",requestee), updatedUser)
+                                        .addOnCompleteListener(updateTask -> {
+                                            if(updateTask.isSuccessful()) {
+                                                Toast.makeText(getApplicationContext(),"friend request sent",Toast.LENGTH_SHORT).show();
+                                            } else{
+                                                Toast.makeText(getApplicationContext(),"could not send friend request",Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                            }
+                        });
+            }
+        });
 
     }
+
+    private void checkIfUserExist(String userName) {
+        Document document = new Document("username", userName);
+        AtomicReference<Task<Document>> fetch = new AtomicReference<>();
+        Util.stitchUserTask.addOnCompleteListener(task -> {
+            fetch.set(Util.userCollection.findOne(document));
+            fetch.get().addOnCompleteListener(fetchTask -> {
+                if (fetchTask.isSuccessful() && fetchTask.getResult() != null) {
+
+                    sendTrackingRequestToUser(userName);
+
+                } else{
+                    Toast.makeText(this,"user " +userName +" does not exist", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+    }
+
+    public void showPendingRequestsPressed(View view) {
+
+        AtomicReference<ArrayList<String>> pendingRequestsFetched = new AtomicReference<>();
+
+        Util.userCollection.findOne(new Document("username", Util.userName))
+                .addOnCompleteListener(task -> {
+            if(task.isSuccessful() && task.getResult() != null){
+                Document userDocument = task.getResult();
+                pendingRequestsFetched.set(userDocument.get("pendingRequests") == null
+                        ? new ArrayList<>()
+                        : (ArrayList<String>)userDocument.get("pendingRequests"));
+
+                Intent intent = new Intent(this, PendingRequests.class);
+                intent.putStringArrayListExtra("pendingRequests",
+                        pendingRequestsFetched.get());
+                startActivity(intent);
+            }
+        });
+
+    }
+
+
+
 }
