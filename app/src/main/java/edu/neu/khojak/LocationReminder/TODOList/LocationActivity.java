@@ -12,6 +12,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.Places;
@@ -65,8 +66,9 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                 location.setLatitude(place.getLatLng().latitude);
                 location.setLongitude(place.getLatLng().longitude);
                 mMap.addMarker(markerOptions);
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(10.0f));
+                mMap.animateCamera(CameraUpdateFactory
+                        .newCameraPosition(new CameraPosition.Builder().target(place.getLatLng()).zoom(10.0f).build()));
+
                 Log.i(TAG, "Place: " + place.getName() + ", " + place.toString());
             }
 
