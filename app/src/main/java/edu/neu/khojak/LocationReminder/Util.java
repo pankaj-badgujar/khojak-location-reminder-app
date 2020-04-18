@@ -1,6 +1,8 @@
 package edu.neu.khojak.LocationReminder;
 
 
+import android.content.Context;
+
 import com.google.android.gms.tasks.Task;
 import com.mongodb.stitch.android.core.Stitch;
 import com.mongodb.stitch.android.core.StitchAppClient;
@@ -17,6 +19,8 @@ import org.bson.types.ObjectId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import es.dmoral.toasty.Toasty;
 
 public class Util {
 
@@ -104,6 +108,23 @@ public class Util {
                             //Do Something;
                         }
                     });
+                }
+            });
+        });
+    }
+
+    public static void deletePendingRequest(Context context , int position){
+        userCollection.findOne(new Document("username",userName)).addOnCompleteListener(userFound ->{
+            Document user = userFound.getResult();
+            if (!userFound.isSuccessful() || user == null) {
+                return;
+            }
+            List<String> pendingRequests = (List<String>)user.get("pendingRequests");
+            pendingRequests.remove(position);
+            user.append("pendingRequests",pendingRequests);
+            userCollection.updateOne(new Document("username", userName), user).addOnCompleteListener( updateTask -> {
+                if(updateTask.isSuccessful()){
+                    Toasty.error(context,"Pending request deleted", Toasty.LENGTH_SHORT).show();
                 }
             });
         });
