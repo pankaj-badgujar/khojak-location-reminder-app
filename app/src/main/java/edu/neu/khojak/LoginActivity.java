@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.Task;
 
 import org.bson.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -26,6 +27,9 @@ import edu.neu.khojak.LocationReminder.DAO.UserDAO;
 import edu.neu.khojak.LocationReminder.Database.UserDatabase;
 import edu.neu.khojak.LocationReminder.POJO.User;
 import edu.neu.khojak.LocationReminder.Util;
+
+import static edu.neu.khojak.Constants.FRIEND_LIST;
+import static edu.neu.khojak.Constants.PENDING_REQUESTS;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -119,26 +123,28 @@ public class LoginActivity extends AppCompatActivity {
     private void authenticateUser(String userName) {
         Document document = new Document("username", userName);
         Util.userCollection.findOne(document).addOnCompleteListener(fetchTask -> {
-           if(fetchTask.isSuccessful() && fetchTask.getResult() != null) {
-               Util.userName = userName;
-               (new InsertUser()).execute(this);
-               login();
-           } else {
-               editText.setError(getString(R.string.username_error));
-               progressDialog.dismiss();
-           }
+            if(fetchTask.isSuccessful() && fetchTask.getResult() != null) {
+                Util.userName = userName;
+                (new InsertUser()).execute(this);
+                login();
+            } else {
+                editText.setError(getString(R.string.username_error));
+                progressDialog.dismiss();
+            }
         });
     }
 
     private void addUser(String userName) {
         Document document = new Document("username", userName);
+        document.put(PENDING_REQUESTS, new ArrayList<String>());
+        document.put(FRIEND_LIST, new ArrayList<String>());
         AtomicReference<Task<Document>> fetch = new AtomicReference<>();
         Util.userCollection.findOne(document).addOnCompleteListener(fetchTask -> {
             if (fetchTask.isSuccessful() || fetchTask.getResult() == null) {
                 Util.userCollection.insertOne(document).addOnCompleteListener(insertTask -> {
                     if (insertTask.isSuccessful()) {
                         Util.userName = userName;
-                        (new InsertUser()).execute();
+                        (new InsertUser()).execute(this);
                         login();
                     }
                 });
@@ -185,6 +191,4 @@ public class LoginActivity extends AppCompatActivity {
                 break;
         }
     }
-
-
 }

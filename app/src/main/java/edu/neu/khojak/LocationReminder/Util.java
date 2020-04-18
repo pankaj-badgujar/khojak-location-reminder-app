@@ -18,6 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import edu.neu.khojak.LocationTracker.adapters.PendingRequestsAdapter;
+
+import static edu.neu.khojak.Constants.FRIEND_LIST;
+import static edu.neu.khojak.Constants.PENDING_REQUESTS;
+import static edu.neu.khojak.Constants.USERNAME;
+
 public class Util {
 
     public static String userName;
@@ -31,6 +37,7 @@ public class Util {
      groupName: groupName,
      groupMembers: ArrayList with all the group members of this group*/
     public final static List<Document> groupData = new ArrayList<>();
+    public final static List<String> friendList = new ArrayList<>();
 
     public final static RemoteMongoClient mongoClient =
             client.getServiceClient(RemoteMongoClient.factory, "khojak-data");
@@ -56,7 +63,7 @@ public class Util {
     }
 
     public static void fetchData() {
-        userCollection.findOne(new Document("username", userName)).addOnCompleteListener(task -> {
+        userCollection.findOne(new Document(USERNAME, userName)).addOnCompleteListener(task -> {
             Document user = task.getResult();
             if (!task.isSuccessful() || user == null) {
                 return;
@@ -65,6 +72,9 @@ public class Util {
             if (object == null) {
                 return;
             }
+
+
+
             List<ObjectId> groupIds = ((List<String>) object).stream().map(ObjectId::new).collect(Collectors.toList());
             Document document = new Document("$in", groupIds);
             Document query = new Document("_id", document);
@@ -84,6 +94,27 @@ public class Util {
                 }
             });
         });
+    }
+
+    public static void fetchFriendList(){
+
+        userCollection.findOne(new Document(USERNAME, userName)).addOnCompleteListener(task -> {
+
+            Document user = task.getResult();
+            if (!task.isSuccessful() || user == null) {
+                return;
+            }
+
+            List<String> friendListCasted = (List<String>) user.get(FRIEND_LIST);
+            friendListCasted.stream().forEach(friendFetchedFromDB -> {
+                if (friendList.stream().anyMatch(friendAlreadyPresent -> friendAlreadyPresent.equals(friendFetchedFromDB))) {
+                    return;
+                }
+                friendList.add(friendFetchedFromDB);
+            });
+
+        });
+
     }
 
     public static void removeReminder(Document reminder) {
@@ -107,5 +138,44 @@ public class Util {
                 }
             });
         });
+    }
+
+    public static void deletePendingRequest(PendingRequestsAdapter adapter, String requestToDelete){
+        userCollection.findOne(new Document(USERNAME,userName)).addOnCompleteListener(userFound ->{
+            Document user = userFound.getResult();
+            if (!userFound.isSuccessful() || user == null) {
+                return;
+            }
+            List<String> pendingRequests = (List<String>)user.get(PENDING_REQUESTS);
+            pendingRequests.remove(requestToDelete);
+            user.append(PENDING_REQUESTS,pendingRequests);
+            userCollection.updateOne(new Document(USERNAME, userName), user).addOnCompleteListener(updateTask ->{
+                if(updateTask.isSuccessful()){
+
+                }
+            });
+            });
+    }
+
+
+
+    public static void acceptPendingRequest(PendingRequestsAdapter adapter, String requestToAccept) {
+
+        // First add ourselves into their friend list
+
+        userCollection.findOne(new Document(USERNAME, requestToAccept)).addOnCompleteListener(userFound ->{
+            Document userToBefriend = userFound.getResult();
+            if(!userFound.isSuccessful() || userToBefriend == null){
+                return;
+            }
+            List<String> friendList = (List<String>)userToBefriend.get(FRIEND_LIST);
+            friendList.add(userName);
+            userToBefriend.append(FRIEND_LIST, friendList);
+            userCollection.updateOne(new Document(USERNAME, requestToAccept), userToBefriend);
+        });
+
+        // Now delete their pending request as it is no longer pending
+
+        deletePendingRequest(adapter, requestToAccept);
     }
 }

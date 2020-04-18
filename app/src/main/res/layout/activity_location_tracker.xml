@@ -17,20 +17,110 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:popupTheme="@style/AppTheme.PopupOverlay" >
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="right">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Show pending requests"
+                    android:layout_alignParentRight="true"
+                    android:textSize="14sp"
+                    android:layout_marginRight="10dp"
+                    android:paddingHorizontal="10dp"
+                    android:textColor="@android:color/black"
+                    android:onClick="showPendingRequestsPressed"
+                    android:background="@drawable/custom_button_pending_request"
+                    />
+            </RelativeLayout>
+
+
+        </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.cardview.widget.CardView
+        android:layout_margin="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_margin="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add friends to track"
+            android:layout_marginStart="5dp"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:layout_marginTop="15dp"/>
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/userToSendTrackRequest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter username"
+            android:layout_marginTop="20dp"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_marginTop="5dp"
+            android:text="Send Request to track"
+            android:onClick="sendTrackingRequestPressed"
+            android:background="@android:color/holo_green_light" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="?android:attr/listDivider" />
+
+
+
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="30dp">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/userToBeTracked"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="I want to track..." />
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Friend to track:"
+                android:layout_weight="1"/>
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/userToBeTracked"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="8"
+                />
+
+
+        </LinearLayout>
+
 
         <Button
             android:id="@+id/setPersonalLocationBtn"
