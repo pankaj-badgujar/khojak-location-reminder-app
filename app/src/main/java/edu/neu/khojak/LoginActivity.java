@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
@@ -18,8 +19,12 @@ import com.google.android.gms.tasks.Task;
 
 import org.bson.Document;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import edu.neu.khojak.LocationReminder.DAO.UserDAO;
+import edu.neu.khojak.LocationReminder.Database.UserDatabase;
+import edu.neu.khojak.LocationReminder.POJO.User;
 import edu.neu.khojak.LocationReminder.Util;
 
 public class LoginActivity extends AppCompatActivity {
@@ -27,16 +32,8 @@ public class LoginActivity extends AppCompatActivity {
     EditText editText;
     private ProgressDialog progressDialog;
 
-    public static volatile Boolean isLoggedIn = null;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        editText = findViewById(R.id.username);
-
-        progressDialog = new ProgressDialog(this);
-
         if (!checkPermission()) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(
                     this, Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -58,6 +55,26 @@ public class LoginActivity extends AppCompatActivity {
                         requestPermission(RequestType.SPECIAL);
                     }).setNegativeButton("No", ((dialog, which) -> finish()))
                     .setIcon(android.R.drawable.ic_dialog_alert).create().show();
+        }
+
+        (new FetchTask()).execute(this);
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+        editText = findViewById(R.id.username);
+        progressDialog = new ProgressDialog(this);
+    }
+
+    private class FetchTask extends AsyncTask<LoginActivity, Void, Void> {
+        @Override
+        protected Void doInBackground(LoginActivity... loginActivities) {
+            UserDAO dao = UserDatabase.getInstance(loginActivities[0]).getUserDao();
+            List<User> user = dao.getAllUsers();
+            if(user.size() > 0) {
+                Util.userName = user.get(0).getUsername();
+                login();
+            }
+            return null;
         }
     }
 
@@ -81,7 +98,6 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
         authenticateUser(editText.getText().toString());
-
     }
 
     private void login() {
@@ -89,11 +105,23 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
+    private class InsertUser extends AsyncTask<LoginActivity, Void, Void> {
+        @Override
+        protected Void doInBackground(LoginActivity... loginActivities) {
+            UserDAO dao = UserDatabase.getInstance(loginActivities[0]).getUserDao();
+            User user = new User();
+            user.setUsername(Util.userName);
+            dao.insert(user);
+            return null;
+        }
+    }
+
     private void authenticateUser(String userName) {
         Document document = new Document("username", userName);
         Util.userCollection.findOne(document).addOnCompleteListener(fetchTask -> {
            if(fetchTask.isSuccessful() && fetchTask.getResult() != null) {
                Util.userName = userName;
+               (new InsertUser()).execute(this);
                login();
            } else {
                editText.setError(getString(R.string.username_error));
@@ -106,10 +134,11 @@ public class LoginActivity extends AppCompatActivity {
         Document document = new Document("username", userName);
         AtomicReference<Task<Document>> fetch = new AtomicReference<>();
         Util.userCollection.findOne(document).addOnCompleteListener(fetchTask -> {
-            if (fetchTask.isSuccessful() && fetchTask.getResult() == null) {
+            if (fetchTask.isSuccessful() || fetchTask.getResult() == null) {
                 Util.userCollection.insertOne(document).addOnCompleteListener(insertTask -> {
                     if (insertTask.isSuccessful()) {
                         Util.userName = userName;
+                        (new InsertUser()).execute();
                         login();
                     }
                 });

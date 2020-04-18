@@ -58,7 +58,7 @@ public class Util {
     public static void fetchData() {
         userCollection.findOne(new Document("username", userName)).addOnCompleteListener(task -> {
             Document user = task.getResult();
-            if (!task.isSuccessful() && user == null) {
+            if (!task.isSuccessful() || user == null) {
                 return;
             }
             Object object = user.get("groupIds");

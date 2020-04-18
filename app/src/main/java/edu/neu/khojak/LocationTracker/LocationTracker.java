@@ -69,7 +69,7 @@ public class LocationTracker extends AppCompatActivity {
             Document document = new Document();
             document.append("username", userToTrack);
             Util.userCollection.findOne(document).addOnCompleteListener(task -> {
-                if(!task.isSuccessful() && task.getResult() == null) {
+                if(!task.isSuccessful() || task.getResult() == null) {
                     userToBeTracked.setError("Username is not correct");
                     return;
                 }
@@ -89,7 +89,7 @@ public class LocationTracker extends AppCompatActivity {
             }
             Util.userCollection.findOne(new Document("username",Util.userName))
                     .addOnCompleteListener(fetchTask -> {
-                        if(!fetchTask.isSuccessful() && fetchTask.getResult() == null){
+                        if(!fetchTask.isSuccessful() || fetchTask.getResult() == null){
                             return;
                         }
                         Document document = fetchTask.getResult();

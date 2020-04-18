@@ -227,14 +227,14 @@ public class CombinedReminders extends AppCompatActivity implements PersonalRemi
         newGroupReminder.put("groupId", groupId);
 
         Util.reminderCollection.insertOne(newGroupReminder).addOnCompleteListener(reminderInsertedTask -> {
-            if(!reminderInsertedTask.isSuccessful() && reminderInsertedTask.getResult() == null) {
+            if(!reminderInsertedTask.isSuccessful() || reminderInsertedTask.getResult() == null) {
                 return;
             }
             String reminderId = Util
                     .getId(reminderInsertedTask.getResult().getInsertedId());
             Document group = new Document("_id",new ObjectId(groupId));
             Util.groupCollection.findOne(group).addOnCompleteListener(reminderGroup -> {
-                if(!reminderGroup.isSuccessful() && reminderGroup.getResult() ==null ){
+                if(!reminderGroup.isSuccessful() || reminderGroup.getResult() == null ){
                     return;
                 }
                 Document groupDocument = reminderGroup.getResult();
