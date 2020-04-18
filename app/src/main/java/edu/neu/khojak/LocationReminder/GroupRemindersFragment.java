@@ -17,6 +17,9 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.mongodb.stitch.android.services.mongodb.remote.AsyncChangeStream;
+import com.mongodb.stitch.core.services.mongodb.remote.ChangeEvent;
+
 import org.bson.Document;
 
 import java.util.List;
@@ -42,6 +45,14 @@ public class GroupRemindersFragment extends Fragment {
         groupRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         groupRecyclerView.setHasFixedSize(true);
 
+        Util.userCollection.watch().addOnCompleteListener(runnable -> {
+            if(runnable.isSuccessful()) {
+                AsyncChangeStream<Document, ChangeEvent<Document>> asyncChangeStream = runnable.getResult();
+                asyncChangeStream.addChangeEventListener( (data, event) -> {
+                    Util.fetchData();
+                });
+            }
+        });
 
         //attach adapter to
         groupAdapter = new GroupAdapter(getContext(), Util.groupData);
