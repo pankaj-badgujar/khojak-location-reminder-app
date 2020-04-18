@@ -1,13 +1,16 @@
 package edu.neu.khojak.LocationReminder.TODOList;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.fragment.app.FragmentActivity;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -23,10 +26,13 @@ public class ReminderLocationView extends FragmentActivity implements OnMapReady
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment)
+                .getView().setVisibility(View.GONE);
 
         Bundle bundle = getIntent().getExtras();
         reminder = bundle.getParcelable("reminder");
@@ -52,7 +58,9 @@ public class ReminderLocationView extends FragmentActivity implements OnMapReady
         marker.title(reminder.getTitle());
         marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
         mMap.addMarker(marker);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(current));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(10.0f));
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(current).zoom(10.0f).build()));
+
+
+
     }
 }

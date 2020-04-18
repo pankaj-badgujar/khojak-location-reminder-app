@@ -156,7 +156,7 @@ public class TrackingService extends Service {
         LocationManager locationManager =
                 (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if (checkPermission()) {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                     60,
                     1, new TrackingService.LocationTracker());
         }

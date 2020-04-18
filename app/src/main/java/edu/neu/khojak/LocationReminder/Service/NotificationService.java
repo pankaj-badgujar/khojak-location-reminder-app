@@ -31,7 +31,6 @@ import org.bson.types.ObjectId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -91,7 +90,7 @@ public class NotificationService extends Service {
         LocationManager locationManager =
                 (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if(checkPermission()){
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                     60,
                     1, new LocationTracker());
         }
