@@ -168,11 +168,9 @@ public class Util {
             List<String> friendList = (List<String>)userToBefriend.get(FRIEND_LIST);
             friendList.add(userName);
             userToBefriend.append(FRIEND_LIST, friendList);
-            userCollection.updateOne(new Document(USERNAME, requestToAccept), userToBefriend);
+            userCollection.updateOne(new Document(USERNAME, requestToAccept), userToBefriend).addOnCompleteListener(updateTask -> {
+                deletePendingRequest(adapter, requestToAccept);
+            });
         });
-
-        // Now delete their pending request as it is no longer pending
-
-        deletePendingRequest(adapter, requestToAccept);
     }
 }

@@ -10,6 +10,9 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.bson.Document;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.neu.khojak.LocationReminder.EmptyRecyclerView;
@@ -32,10 +35,20 @@ public class PendingRequests extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        pendingRequests = getIntent().getExtras().getStringArrayList("pendingRequests");
-
-
+        pendingRequests = new ArrayList<>();
         pendingRequestsAdapter = new PendingRequestsAdapter(this, pendingRequests);
+
+        Util.userCollection.findOne(new Document("username", Util.userName))
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        Document userDocument = task.getResult();
+                        pendingRequests.addAll(userDocument.get("pendingRequests") == null
+                                ? new ArrayList<>()
+                                : (ArrayList<String>) userDocument.get("pendingRequests"));
+                        pendingRequestsAdapter.notifyDataSetChanged();
+
+                    }
+                });
 
         pendingRequestsRecyclerView = findViewById(R.id.pendingRequestsRecyclerView);
         pendingRequestsRecyclerView.setLayoutManager(new LinearLayoutManager(this));

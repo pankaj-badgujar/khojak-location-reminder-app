@@ -164,6 +164,7 @@ public class LocationTracker extends AppCompatActivity {
                                                 Util.userCollection.updateOne(new Document(USERNAME, requestee), updatedUser)
                                                         .addOnCompleteListener(updateTask -> {
                                                             if (updateTask.isSuccessful()) {
+                                                                userToSendTrackRequest.setText("");
                                                                 Toasty.success(getApplicationContext(), "friend request sent", Toast.LENGTH_SHORT).show();
                                                             } else {
                                                                 Toasty.error(getApplicationContext(), "could not send friend request", Toast.LENGTH_SHORT).show();
@@ -230,23 +231,6 @@ public class LocationTracker extends AppCompatActivity {
     }
 
     public void showPendingRequestsPressed(View view) {
-
-        AtomicReference<ArrayList<String>> pendingRequestsFetched = new AtomicReference<>();
-
-        Util.userCollection.findOne(new Document("username", Util.userName))
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        Document userDocument = task.getResult();
-                        pendingRequestsFetched.set(userDocument.get("pendingRequests") == null
-                                ? new ArrayList<>()
-                                : (ArrayList<String>) userDocument.get("pendingRequests"));
-
-                        Intent intent = new Intent(this, PendingRequests.class);
-                        intent.putStringArrayListExtra("pendingRequests",
-                                pendingRequestsFetched.get());
-                        startActivity(intent);
-                    }
-                });
-
+        startActivity(new Intent(this, PendingRequests.class));
     }
 }
