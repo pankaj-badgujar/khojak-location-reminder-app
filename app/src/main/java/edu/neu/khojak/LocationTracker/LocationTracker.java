@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.Task;
+import com.mongodb.stitch.android.services.mongodb.remote.AsyncChangeStream;
+import com.mongodb.stitch.core.services.mongodb.remote.ChangeEvent;
 
 import org.bson.Document;
 
@@ -36,7 +38,7 @@ public class LocationTracker extends AppCompatActivity {
     private Location destinationLocation;
     private Spinner friendSpinner;
     private EditText userToSendTrackRequest;
-    private ArrayAdapter<String> spinnerDataAdapter;
+    public static ArrayAdapter<String> spinnerDataAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,15 @@ public class LocationTracker extends AppCompatActivity {
         setContentView(R.layout.activity_location_tracker);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Util.userCollection.watch().addOnCompleteListener(runnable -> {
+            if(runnable.isSuccessful()) {
+                AsyncChangeStream<Document, ChangeEvent<Document>> asyncChangeStream = runnable.getResult();
+                asyncChangeStream.addChangeEventListener( (data, event) -> {
+                    Util.fetchFriendList();
+                });
+            }
+        });
 
         //initializing friendRequest spinner
         spinnerDataAdapter =
@@ -125,7 +136,7 @@ public class LocationTracker extends AppCompatActivity {
                         List<String> friendListCasted = (List<String>) friendListObject;
                         if (friendListCasted.contains(requestee)) {
                             Toasty.warning(getApplicationContext(),
-                                    "user " + requestee + "is already a friend !", Toast.LENGTH_SHORT).show();
+                                    "user " + requestee + " is already a friend !", Toast.LENGTH_SHORT).show();
                         }
                         // if not friend, then check if we already sent him friend request
                         else {

@@ -23,6 +23,7 @@ import edu.neu.khojak.LocationTracker.adapters.PendingRequestsAdapter;
 import static edu.neu.khojak.Constants.FRIEND_LIST;
 import static edu.neu.khojak.Constants.PENDING_REQUESTS;
 import static edu.neu.khojak.Constants.USERNAME;
+import static edu.neu.khojak.LocationTracker.LocationTracker.spinnerDataAdapter;
 
 public class Util {
 
@@ -104,6 +105,9 @@ public class Util {
                     return;
                 }
                 friendList.add(friendFetchedFromDB);
+                if(spinnerDataAdapter != null){
+                    spinnerDataAdapter.notifyDataSetChanged();
+                }
             });
 
         });
