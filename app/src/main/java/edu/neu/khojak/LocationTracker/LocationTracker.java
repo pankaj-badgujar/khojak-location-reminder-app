@@ -51,7 +51,15 @@ public class LocationTracker extends AppCompatActivity {
             if(runnable.isSuccessful()) {
                 AsyncChangeStream<Document, ChangeEvent<Document>> asyncChangeStream = runnable.getResult();
                 asyncChangeStream.addChangeEventListener( (data, event) -> {
-                    Util.fetchFriendList();
+                    int i=0;
+                    while(i<1000){
+                        i++;
+                    }
+                    if(Util.userName !=null && event.getFullDocument() != null &&
+                            event.getFullDocument().get(USERNAME).toString().equals(Util.userName) &&
+                            ((List<String>) event.getFullDocument().get(FRIEND_LIST)).size() > Util.friendList.size()) {
+                        Util.fetchFriendList();
+                    }
                 });
             }
         });

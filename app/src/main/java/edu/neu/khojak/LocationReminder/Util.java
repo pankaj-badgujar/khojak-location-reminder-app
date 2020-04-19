@@ -87,6 +87,15 @@ public class Util {
                         }
                         groupData.add(data);
                     });
+                    List<Document> tempData = new ArrayList<>();
+                    groupData.stream().forEach(data -> {
+                        if (groupObjectList.getResult().stream().anyMatch(groupTest ->
+                                data.get("_id").equals(groupTest.get("_id")))) {
+                            return;
+                        }
+                        tempData.add(data);
+                    });
+                    groupData.removeAll(tempData);
                     if (GroupRemindersFragment.groupAdapter != null) {
                         GroupRemindersFragment.groupAdapter.notifyDataSetChanged();
                     }
@@ -98,7 +107,6 @@ public class Util {
     public static void fetchFriendList(){
 
         userCollection.findOne(new Document(USERNAME, userName)).addOnCompleteListener(task -> {
-
             Document user = task.getResult();
             if (!task.isSuccessful() || user == null) {
                 return;
@@ -110,11 +118,19 @@ public class Util {
                     return;
                 }
                 friendList.add(friendFetchedFromDB);
-                if(spinnerDataAdapter != null){
-                    spinnerDataAdapter.notifyDataSetChanged();
-                }
             });
-
+            List<String> tempData = new ArrayList<>();
+            friendList.stream().forEach(friendFetchedFromDB -> {
+                if (friendListCasted.stream().anyMatch(friendAlreadyPresent ->
+                        friendAlreadyPresent.equals(friendFetchedFromDB))) {
+                    return;
+                }
+                tempData.add(friendFetchedFromDB);
+            });
+            friendList.removeAll(tempData);
+            if(spinnerDataAdapter != null) {
+                spinnerDataAdapter.notifyDataSetChanged();
+            }
         });
 
     }
@@ -151,11 +167,7 @@ public class Util {
             List<String> pendingRequests = (List<String>)user.get(PENDING_REQUESTS);
             pendingRequests.remove(requestToDelete);
             user.append(PENDING_REQUESTS,pendingRequests);
-            userCollection.updateOne(new Document(USERNAME, userName), user).addOnCompleteListener(updateTask ->{
-                if(updateTask.isSuccessful()){
-
-                }
-            });
+            userCollection.updateOne(new Document(USERNAME, userName), user);
             });
     }
 
@@ -173,7 +185,7 @@ public class Util {
             List<String> friendList = (List<String>)userToBefriend.get(FRIEND_LIST);
             friendList.add(userName);
             userToBefriend.append(FRIEND_LIST, friendList);
-            userCollection.updateOne(new Document(USERNAME, requestToAccept), userToBefriend).addOnCompleteListener(updateTask -> {
+            userCollection.updateOne(new Document(USERNAME, requestToAccept), userToBefriend).addOnCompleteListener( fetchTask -> {
                 deletePendingRequest(adapter, requestToAccept);
             });
         });

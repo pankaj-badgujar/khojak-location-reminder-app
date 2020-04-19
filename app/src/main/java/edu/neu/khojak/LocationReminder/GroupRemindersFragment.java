@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.mongodb.stitch.android.services.mongodb.remote.AsyncChangeStream;
 import com.mongodb.stitch.core.services.mongodb.remote.ChangeEvent;
+import com.mongodb.stitch.core.services.mongodb.remote.OperationType;
 
 import org.bson.Document;
 
@@ -45,11 +46,18 @@ public class GroupRemindersFragment extends Fragment {
         groupRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         groupRecyclerView.setHasFixedSize(true);
 
-        Util.userCollection.watch().addOnCompleteListener(runnable -> {
+        Util.groupCollection.watch().addOnCompleteListener(runnable -> {
             if(runnable.isSuccessful()) {
                 AsyncChangeStream<Document, ChangeEvent<Document>> asyncChangeStream = runnable.getResult();
                 asyncChangeStream.addChangeEventListener( (data, event) -> {
-                    Util.fetchData();
+                   if(event.getOperationType() == OperationType.INSERT
+                           || event.getOperationType() == OperationType.DELETE) {
+                       int i =0 ;
+                       while( i < 1000) {
+                           i++;
+                       }
+                       Util.fetchData();
+                   }
                 });
             }
         });
